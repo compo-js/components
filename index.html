@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+</head>
+<body>
+
+  <c-header id="header"></c-header>
+
+  <br>
+  <c-calc id="calc"></c-calc>
+
+  <template name="c-calc">
+    <form action="#">
+    <p>Ширина: <input id="width" type="number"></p>
+    <p>Высота: <input id="height" type="number"></p>
+    <!-- <p>Ширина: <input id="width" type="number" oninput="this.$data.width = event.target.value"></p>
+    <p>Высота: <input id="height" type="number" oninput="this.$data.height = event.target.value"></p> -->
+    <p>Площадь: ${ this.width * this.height }</p>
+    </form>
+    <script>
+      this.width = 0
+      this.height = 0
+
+      this.$('#width').addEventListener('input', e => this.width = e.target.value)
+      this.$('#height').addEventListener('input', e => this.height = e.target.value)
+
+      // this.$connected(() => {
+      //   this.$('#width').addEventListener('input', e => this.width = e.target.value)
+      //   this.$('#height').addEventListener('input', e => this.height = e.target.value)
+      // })
+    </script>
+  </template>
+
+  <c-footer id="footer"></c-footer>
+  <c-footer id="footer"></c-footer>
+
+  <template src="dist/components.htm"></template>
+  <!-- <script src="dist/observer.js"></script> -->
+  <!-- <script src="dist/router.js"></script> -->
+  <script src="dist/compo.js"></script>
+  
+  <script>
+    Compo(document.querySelector('template[name="c-calc"]').outerHTML)
+    // setTimeout(() => console.log(item), 1000)
+  </script>
+</body>
+</html>

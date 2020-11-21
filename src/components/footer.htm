@@ -1,0 +1,16 @@
+<template name="c-footer">
+  <br>
+  <p><b>${ name }</b></p>
+
+  <script>
+    this.name = 'Футер'
+
+    document.addEventListener('test', e => {
+      console.log(e.detail)
+    })
+
+    document.addEventListener('about#test', e => {
+      console.log('О компании: ', e)
+    })
+  </script>
+</template>
