@@ -1,25 +1,10 @@
 import observable from './observable'
 import reactive from './reactive'
+import popstate from './popstate'
 import remove from './remove'
 
 // создать хранилище компонентов
 export const components = new WeakMap()
-
-
-// функция-обработчик события 'popstate' для объекта 'window'
-function popstate(events, target = location, href = target.href.replace(target.origin, '')) {
-  // перебрать массив событий 'events'
-  events.forEach(event => {
-    // если тип события соответствует 'href'
-    if(new RegExp(`^[/]?${event.type}$`).test(href)) {
-      // изменить стандартное значение свойства 'target' у объекта события
-      Object.defineProperty(event, 'target', { value: target, enumerable: true, writable: true })
-      
-      // вызвать обработчики этого события для 'document'
-      document.dispatchEvent(event)
-    }
-  })
-}
 
 // объект конфигурации MutationObserver
 const mutations = {

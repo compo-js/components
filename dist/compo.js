@@ -644,6 +644,21 @@ function hooks(dep, node) {
 function observable(obj, dep, node) {
   return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj);
 }
+ var popstate = (function (events) {
+  var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
+  var href = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : target.href.replace(target.origin, '');
+  events.forEach(function (event) {
+    if (new RegExp("^[/]?".concat(event.type, "$")).test(href)) {
+      Object.defineProperty(event, 'target', {
+        value: target,
+        enumerable: true,
+        writable: true
+      }); 
+
+      document.dispatchEvent(event);
+    }
+  });
+});
 
 
 function remove(node) {
@@ -676,24 +691,8 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 
 
+
 var components = new WeakMap(); 
-
-function popstate(events) {
-  var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
-  var href = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : target.href.replace(target.origin, '');
-  events.forEach(function (event) {
-    if (new RegExp("^[/]?".concat(event.type, "$")).test(href)) {
-      Object.defineProperty(event, 'target', {
-        value: target,
-        enumerable: true,
-        writable: true
-      }); 
-
-      document.dispatchEvent(event);
-    }
-  });
-} 
-
 
 var mutations = {
   childList: true,
