@@ -6,49 +6,82 @@
 
 - **[Tutorial](http://www.compojs.ru/guide)**
 
-An example of a simple component is shown below:
+Below is an example of a simple component with a header and three loops available in the library:
 
 ```html
 <my-component>
-  <h1>${ message }</h1>
+  <h1>${ title }</h1>
 
   <div c-for="obj of users">
-    <div c-for="prop in obj">
+    <div class="user">
       <p>
-        <b>${ prop }</b>: ${ obj[prop] }
+        <b>Имя</b>: ${ obj.name }
       </p>
+      <p>
+        <b>Возраст</b>: ${ obj.age }
+      </p>
+      <div c-for="category in obj.skills">
+        <p>
+          <b>${ category[0].toUpperCase() + category.slice(1) }</b>:
+          <ol c-for="i = 0; i < obj.skills[category].length; i++">
+            <li>${ obj.skills[category][i] }</li>
+          </ol>
+        </p>
+      </div>
     </div>
-    <br>
+    <hr>
   </div>
-    
+  
   <style>
     h1 {
-      margin-bottom: 50px;
+      margin-bottom: 40px;
       color: ${ color() };
+    }
+    .user {
+      margin: 30px 0;
+    }
+    hr:last-of-type {
+      display: none;
     }
   </style>
 
   <script>
-    this.message = 'My component!'
+    this.title = 'Пользователи'
     this.color = () => 'orangered'
     this.users = [
       {
-        name: 'Dmitry',
-        age: 28
+        name: 'Дмитрий',
+        age: 28,
+        skills: {
+          frontend: ['HTML', 'CSS'],
+          backend: ['PHP', 'Ruby', 'MySQL']
+        }
       },
       {
-        name: 'Olga',
-        age: 25
+        name: 'Ольга',
+        age: 25,
+        skills: {
+          frontend: ['HTML', 'JavaScript'],
+          backend: ['PHP']
+        }
       },
       {
-        name: 'Mark',
-        age: 30
+        name: 'Максим',
+        age: 30,
+        skills: {
+          frontend: ['HTML', 'CSS', 'JavaScript', 'jQuery'],
+          backend: ['Ruby', 'MySQL']
+        }
       }
     ]
   </script>
 </my-component>
 ```
 
+In addition to a convenient way to create Web components and add reactivity to them using a proxy, the library uses the event system available in the browser as an observer and provides a router based on the observer and the pushState () method.
+
 ## Author
+
+The Compo.js library was built without looking back, which explains the lack of support in older browsers. Its purpose was to make application development simple and accessible to everyone, which would have been impossible without the use of modern Web technologies.
 
 - **[compojs.ru](http://www.compojs.ru)**
