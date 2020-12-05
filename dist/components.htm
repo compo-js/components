@@ -16,25 +16,12 @@
 </template>
 <c-header>
   <h1>
-    <p c-hide="hide" title="Привет, Compo">Привет, ${ message }!</p>
+    <p data-hide="hide" title="Привет, Compo">Привет, ${ message }!</p>
   </h1>
-  <!-- <h1 title="${ this.color }" c-hide="this.hide" onclick="console.log(this.$data)">Привет, ${ message }!</h1> -->
-  <!-- <h1 title="${ this.color }" c-hide="this.hide" onclick="console.log(this.$data)">Привет, ${ JSON.stringify(message, null, ' ') }!</h1> -->
-  <!-- <h1 title="${ this.color }" c-hide="this.hide" onclick="console.log(this.$data)">Привет, ${ message.toString() }!</h1> -->
   
   <c-menu></c-menu>
 
-  <!-- <pre>${ this.user }</pre> -->
-  <!-- <pre>${ this.arr }</pre> -->
-  <!-- <pre>${ this.arr }</pre> -->
-  <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque, adipisci.</p> -->
-
-  <!-- <div c-for="item of this.arr">
-    Имя: ${ this.message }
-    <p title="${ this.color }">Число: ${ item }</p>
-  </div> -->
-
-  <div c-for="item of arr">
+  <div data-for="item of arr">
     <p>Число: ${ item }</p>
   </div>
 
@@ -42,19 +29,9 @@
 
   <pre>${ this.users }</pre>
 
-  <div c-for="user of users">
-    <p c-for="prop in user">${ user[prop] } </p>
+  <div data-for="user of users">
+    <p data-for="prop in user">${ user[prop] } </p>
   </div>
-
-  <!-- <p>${ this.user.name }</p> -->
-
-  <!-- <div c-for="prop in this.user">
-    <p>${ prop }: ${ this.user[prop] }</p>
-  </div> -->
-
-  <!-- <div c-for="i = 0; i < this.arr.length; i++">
-    <p>Число: ${ this.arr[i] }</p>
-  </div> -->
 
   <style>
     h1{
@@ -73,11 +50,6 @@
     this.arr = []
     const count = 3
     for(var i = 0; i < count; i++) this.arr[i] = i
-
-    // this.user = {
-    //   name: 'Дима',
-    //   age: 28
-    // }
 
     this.users = [
       {
@@ -103,8 +75,6 @@
       console.log('Контакты: ', e)
     })
 
-    // console.log(window)
-
   </script>
 </c-header>
 <c-menu>
@@ -125,8 +95,6 @@
   </style>
 
   <script>
-    // console.log('МЕНЮ')
-
     const event1 = this.$event('#start')
     const event2 = this.$event('about#test')
     const event3 = this.$event('contacts\\?a=5')

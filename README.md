@@ -12,7 +12,7 @@ Below is an example of a simple component with a header and three loops availabl
 <my-component>
   <h1>${ title }</h1>
 
-  <div c-for="obj of users">
+  <div data-for="obj of users">
     <div class="user">
       <p>
         <b>Имя</b>: ${ obj.name }
@@ -20,13 +20,11 @@ Below is an example of a simple component with a header and three loops availabl
       <p>
         <b>Возраст</b>: ${ obj.age }
       </p>
-      <div c-for="category in obj.skills">
-        <p>
-          <b>${ category[0].toUpperCase() + category.slice(1) }</b>:
-          <ol c-for="i = 0; i < obj.skills[category].length; i++">
-            <li>${ obj.skills[category][i] }</li>
-          </ol>
-        </p>
+      <div data-for="category in obj.skills">
+        <b>${ category[0].toUpperCase() + category.slice(1) }</b>:
+        <ol data-for="i = 0; i < obj.skills[category].length; i++">
+          <li>${ obj.skills[category][i] }</li>
+        </ol>
       </div>
     </div>
     <hr>
@@ -85,3 +83,4 @@ In addition to a convenient way to create Web components and add reactivity to t
 The Compo.js library was built without looking back, which explains the lack of support in older browsers. Its purpose was to make application development simple and accessible to everyone, which would have been impossible without the use of modern Web technologies.
 
 - **[compojs.ru](http://www.compojs.ru)**
+- **[vk](https://vk.com/compojs)**

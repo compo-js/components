@@ -9,7 +9,6 @@ const gulpif = require('gulp-if')
 const multipipe = require('multipipe')
 const browserSync = require('browser-sync').create()
 const del = require('del')
-// const RemoveStrictPlugin = require( 'remove-strict-webpack-plugin' )
 let mode = 'development'
 
 
@@ -39,10 +38,7 @@ function compo() {
             }
           }
         ]
-      },
-      // plugins: [
-      //   new RemoveStrictPlugin()
-      // ]
+      }
     }))
     .pipe(gulpif(mode === 'production', strip()))
     .pipe(gulp.dest('dist'))
@@ -57,7 +53,7 @@ function comments(done) {
   if(mode === 'production') return gulp.src('dist/*.js')
     .pipe(each(function(content, file, callback) {
       callback(null, `/*!
- * Components.js v1.0.0
+ * Components.js v2.0.0
  * (c) ${new Date().getFullYear()} compo.js@mail.ru
  * Released under the MIT License.
  */\n` + content)

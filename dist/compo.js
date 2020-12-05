@@ -1,5 +1,5 @@
 /*!
- * Components.js v1.0.0
+ * Components.js v2.0.0
  * (c) 2020 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -436,7 +436,7 @@ function reactive(node) {
         if (regOn.test(node.nodeName)) Object.defineProperty(node.ownerElement, '$data', {
           value: this.$data
         }); 
-        else if (node.nodeName === 'c-for') {
+        else if (node.nodeName === 'data-for') {
             var template = new DocumentFragment(); 
 
             !toConsumableArray_default()(clear(node.ownerElement).childNodes).forEach(function (node) {
@@ -454,7 +454,7 @@ function reactive(node) {
         reactive.call(this, node.attributes[i]);
       } 
 
-      if (!node.attributes || !node.attributes['c-for']) for (var _i = 0; _i < node.childNodes.length; _i++) {
+      if (!node.attributes || !node.attributes['data-for']) for (var _i = 0; _i < node.childNodes.length; _i++) {
         reactive.call(this, node.childNodes[_i]) || _i--;
       }
     }
@@ -467,7 +467,7 @@ function change(node) {
       change.call(this, node.attributes[i]);
     } 
 
-    if (!node.attributes || !node.attributes['c-for']) for (var _i = 0, _length = node.childNodes.length; _i < _length; _i++) {
+    if (!node.attributes || !node.attributes['data-for']) for (var _i = 0, _length = node.childNodes.length; _i < _length; _i++) {
       change.call(this, node.childNodes[_i]);
     }
   }
@@ -497,7 +497,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  var handler = (function (node) {
   components.get(this).nodes.push(node); 
 
-  if (node.nodeName === 'c-hide') switch (components.get(this).execute.next("var{".concat(Object.keys(this.$data).join(','), "}=this; `${").concat(components.get(this).values.get(node), "}`")).value) {
+  if (node.nodeName === 'data-hide') switch (components.get(this).execute.next("var{".concat(Object.keys(this.$data).join(','), "}=this; `${").concat(components.get(this).values.get(node), "}`")).value) {
     case 'false':
     case 'undefined':
     case 'null':
@@ -512,7 +512,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       node.ownerElement.setAttribute('hidden', '');
       break;
   } 
-  else if (node.nodeName === 'c-for') {
+  else if (node.nodeName === 'data-for') {
       components.get(this).cicles.set(node.ownerElement, 0); 
 
       var execute = components.get(this).execute; 
@@ -768,7 +768,7 @@ var component_default = function (_HTMLElement) {
           return remove.call(assertThisInitialized_default()(_this), node);
         }); 
 
-        if (!record.target.attributes || !record.target.attributes['c-for']) toConsumableArray_default()(record.addedNodes).forEach(function (node) {
+        if (!record.target.attributes || !record.target.attributes['data-for']) toConsumableArray_default()(record.addedNodes).forEach(function (node) {
           return reactive.call(assertThisInitialized_default()(_this), node);
         });
       }); 
@@ -934,7 +934,7 @@ function create(html) {
 
   !toConsumableArray_default()(template.content.children).forEach(function (component) {
     return (
-      customElements.define((component.getAttribute('name') || component.nodeName).toLocaleLowerCase(), function (_Component) {
+      customElements.define((component.getAttribute('data-name') || component.getAttribute('name') || component.nodeName).toLocaleLowerCase(), function (_Component) {
         inherits_default()(_class, _Component);
 
         var _super = compo_createSuper(_class);

@@ -91,7 +91,7 @@ export default class extends HTMLElement {
         record.removedNodes.forEach(node => remove.call(this, node))
 
         // сделать реактивными новые узлы компонента, кроме узлов циклов
-        if(!record.target.attributes || !record.target.attributes['c-for']) [...record.addedNodes].forEach(node => reactive.call(this, node))
+        if(!record.target.attributes || !record.target.attributes['data-for']) [...record.addedNodes].forEach(node => reactive.call(this, node))
       })
       
       // возобновить наблюдение
