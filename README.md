@@ -99,4 +99,4 @@ The Compo.js library was built without looking back, which explains the lack of 
 ## Contacts
 
 - **[https://vk.com/compojs](https://vk.com/compojs)**
-- **[compo.js@mail.ru](compo.js@mail.ru)**
+- **[compo.js@mail.ru](mailto:compo.js@mail.ru)**
