@@ -14,7 +14,7 @@ To meet the validator requirements: [https://validator.w3.org](https://validator
 
 1) It is recommended to use the custom attribute **'data-name'** in the **\<template\>** tags of built-in components, instead of the **'name'** attribute used in the first version. But this is not the case for external components, where the **'name'** attribute is still used if the **\<template\>** tag is selected as the container.
 
-2) Special attributes: **'c-for'** and **'c-hide'** have been replaced with valid custom attributes: ['data-for'](http://compojs.ru/guide#Циклы) and ['data-hide'](http://compojs.ru/guide#Скрытие).
+2) Special attributes: **'c-for'** and **'c-hide'** have been replaced with valid custom attributes: **['data-for'](http://compojs.ru/guide#Циклы)** and **['data-hide'](http://compojs.ru/guide#Скрытие)**.
 
 <hr>
 
