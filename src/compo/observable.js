@@ -25,7 +25,7 @@ function notify(dep) {
     // если узел удалён их хранилища исходных значений, то удалить его из множества зависимых узлов
     if(!components.get(this).values.has(node)) dep.delete(node)
 
-    // иначе, добавить идентификатор обратного вызова для узла и вычислить его исходное исходное значение
+    // иначе, добавить идентификатор обратного вызова для узла и вычислить его исходное значение
     else components.get(this).timers.set(node, setTimeout(() => components.get(this).timers.delete(handler.call(this, node)), 0))
   })
 }
