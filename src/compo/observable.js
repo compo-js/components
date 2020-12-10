@@ -101,7 +101,7 @@ function hooks(dep, node) {
 }
 
 
-// создаёт и возвращает для любого объекта, новый наблюдаемый прокси
+// создаёт и возвращает для любого объекта новый наблюдаемый прокси
 export default function observable(obj, dep, node) {
   return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj)
 }

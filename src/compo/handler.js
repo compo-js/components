@@ -9,7 +9,7 @@ export default function(node) {
 
   // если это узел специального атрибута 'data-hide'
   if(node.nodeName === 'data-hide') switch(components.get(this).execute.next(`var{${Object.keys(this.$data).join(',')}}=this; \`\$\{${components.get(this).values.get(node)}\}\``).value) {
-    // если значение преобразуется в ложное, что удалить атрибут 'hidden' из внешнего элемента
+    // если значение преобразуется в ложное, то удалить атрибут 'hidden' из внешнего элемента
     case 'false': case 'undefined': case 'null': case '0': case '-0': case 'NaN': case '':
       node.ownerElement.removeAttribute('hidden')
       break

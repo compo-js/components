@@ -8,7 +8,7 @@ const regOn = /^on/
 
 // добавляет реактивность элементам компонента
 export default function reactive(node) {
-  // если узел является комментарием или пустым текстом, то удалить его из компонента
+  // если узел является комментарием или пустым текстовым узлом, то удалить его из компонента
   if(node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove()
 
   // если узел является атрибутом или текстовым узлом, то сохранить и вычислить его значение
@@ -16,7 +16,7 @@ export default function reactive(node) {
     // сохранить в хранилище узел и его исходное значение
     components.get(this).values.set(node, node[node.nodeType === 2 ? 'value' : 'data'])
 
-    // если узел являетя атрибутом элемента компонента
+    // если узел является атрибутом
     if(node.nodeType === 2) {
       // если это атрибут событий, то добавить его внешнему элементу свойство объекта данных
       if(regOn.test(node.nodeName)) Object.defineProperty(node.ownerElement, '$data', {value: this.$data})
@@ -29,7 +29,7 @@ export default function reactive(node) {
         // очистить HTML-содержимое внешнего элемента и перенести его в шаблон
         ![...clear(node.ownerElement).childNodes].forEach(node => template.append(node))
 
-        // сохранить в хранилище узел внешнего элемента и его шаблон цикла
+        // сохранить в хранилище узел внешнего элемента и присвоить ему шаблон цикла
         components.get(this).values.set(node.ownerElement, template)
       }
     }
