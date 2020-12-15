@@ -1,11 +1,11 @@
 <c-header>
   <h1>
-    <p data-hide="hide" title="Привет, Compo">Привет, ${ message }!</p>
+    <p c-hide="hide" title="Привет, Compo">Привет, ${ message }!</p>
   </h1>
   
   <c-menu></c-menu>
 
-  <div data-for="item of arr">
+  <div c-for="item of arr">
     <p>Число: ${ item }</p>
   </div>
 
@@ -13,8 +13,8 @@
 
   <pre>${ this.users }</pre>
 
-  <div data-for="user of users">
-    <p data-for="prop in user">${ user[prop] } </p>
+  <div c-for="user of users">
+    <p c-for="prop in user">${ user[prop] } </p>
   </div>
 
   <style>

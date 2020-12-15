@@ -13,7 +13,7 @@
   <br>
   <c-calc id="calc"></c-calc>
 
-  <template data-name="c-calc">
+  <template title="c-calc">
     <form action="#">
     <p>Ширина: <input type="number" oninput="this.$data.width = event.target.value"></p>
     <p>Высота: <input type="number" oninput="this.$data.height = event.target.value"></p>
@@ -32,7 +32,7 @@
   <script src="dist/compo.js"></script>
   
   <script>
-    Compo(document.querySelector('template[data-name="c-calc"]').outerHTML)
+    Compo(document.querySelector('template[title="c-calc"]').outerHTML)
   </script>
 </body>
 </html>

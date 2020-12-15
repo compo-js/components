@@ -21,8 +21,8 @@ function create(html) {
 
   // перебрать все созданные в хранилище шаблоны компонентов
   ![...template.content.children].forEach(component =>
-    // создать компонент с именем из атрибута 'data-name', 'name' или из свойства 'nodeName' его шаблона
-    customElements.define((component.getAttribute('data-name') || component.getAttribute('name') || component.nodeName).toLocaleLowerCase(), class extends Component {
+    // создать компонент с именем из атрибута 'title' или из свойства 'nodeName' его шаблона
+    customElements.define((component.getAttribute('title') || component.nodeName).toLocaleLowerCase(), class extends Component {
       constructor() {
         // передать компонент в родительский класс
         super(component.cloneNode(true))

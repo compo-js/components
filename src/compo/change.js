@@ -10,6 +10,6 @@ export default function change(node) {
     if(node.attributes) for(let i = 0, length = node.attributes.length; i < length; i++) change.call(this, node.attributes[i])
 
     // если у узла есть потомки, то перебрать все дочерние узлы
-    if(!node.attributes || !node.attributes['data-for']) for(let i = 0, length = node.childNodes.length; i < length; i++) change.call(this, node.childNodes[i])
+    if(!node.attributes || !node.attributes['c-for']) for(let i = 0, length = node.childNodes.length; i < length; i++) change.call(this, node.childNodes[i])
   }
 }
