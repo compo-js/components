@@ -33,9 +33,9 @@ Below is an example of a simple component with a header and three loops availabl
 
 ```html
 <my-component>
-  <h1>${ title }</h1>
+  <h1>${ message }</h1>
 
-  <div data-for="obj of users">
+  <div c-for="obj of users">
     <div class="user">
       <p>
         <b>Имя</b>: ${ obj.name }
@@ -43,9 +43,9 @@ Below is an example of a simple component with a header and three loops availabl
       <p>
         <b>Возраст</b>: ${ obj.age }
       </p>
-      <div data-for="category in obj.skills">
+      <div c-for="category in obj.skills">
         <b>${ category[0].toUpperCase() + category.slice(1) }</b>:
-        <ol data-for="i = 0; i < obj.skills[category].length; i++">
+        <ol c-for="i = 0; i < obj.skills[category].length; i++">
           <li>${ obj.skills[category][i] }</li>
         </ol>
       </div>
@@ -67,7 +67,7 @@ Below is an example of a simple component with a header and three loops availabl
   </style>
 
   <script>
-    this.title = 'Пользователи'
+    this.message = 'Пользователи'
     this.color = () => 'orangered'
     this.users = [
       {
