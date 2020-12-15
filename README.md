@@ -10,7 +10,7 @@
 
 ## Upgrade to version 3.0.0
 
-1) After additional analysis, it was decided to return the special attributes: **[data-for](http://compojs.ru/guide#Циклы)** and **[data-hide](http://compojs.ru/guide#Скрытие)**, instead of the custom attributes: **data-for** and **data-hide**, which were introduced in the second version.
+1) After additional analysis, it was decided to return the special attributes: **[c-for](http://compojs.ru/guide#Циклы)** and **[c-hide](http://compojs.ru/guide#Скрытие)**, instead of the custom attributes: **data-for** and **data-hide**, which were introduced in the second version.
 
 2) All inline and external component **\<template>** tags now use a single **[title](http://compojs.ru/guide#Начало-работы)** attribute instead of the **data-name** and **name** attributes.
 
