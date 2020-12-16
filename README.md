@@ -16,17 +16,6 @@
 
 As with the second version, the test application is still **[validated](https://validator.w3.org/nu/?doc=http%3A%2F%2Fcompojs.ru%2Fdist%2Ffiles%2Fexample.html)**.
 
-
-<hr>
-
-## Upgrade to version 2.0.0
-
-To meet the validator requirements: [https://validator.w3.org](https://validator.w3.org)
-
-1) It is recommended to use the custom attribute **data-name** in the **\<template\>** tags of built-in components, instead of the **name** attribute used in the first version. But this is not the case for external components, where the **name** attribute is still used if the **\<template\>** tag is selected as the container.
-
-2) Special attributes: **c-for** and **c-hide** have been replaced with valid custom attributes: **[data-for](http://compojs.ru/guide#Циклы)** and **[data-hide](http://compojs.ru/guide#Скрытие)**.
-
 <hr>
 
 Below is an example of a simple component with a header and three loops available in the library:
