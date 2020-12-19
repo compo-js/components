@@ -8,6 +8,10 @@
 
 <hr>
 
+- **[Build](https://vk.com/compojs?w=wall627015308_52%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)** for **[BEM](https://en.bem.info/methodology/css/)**:  **[new-pug-bem-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-bem-sass-autoprefixer.zip)**
+
+- **[Build](https://vk.com/compojs?w=wall627015308_51%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)**:  **[new-pug-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-sass-autoprefixer.zip)**
+
 - Added support for **[Autoprefixer](https://github.com/postcss/autoprefixer)** in components: **[gulp-compo-autoprefixer](https://www.npmjs.com/package/gulp-compo-autoprefixer)**
 
 - Added support for **[Sass](https://sass-lang.com/)** preprocessor in components: **[gulp-compo-sass](https://www.npmjs.com/package/gulp-compo-sass)**
