@@ -8,7 +8,9 @@
 
 <hr>
 
-#### Added support for **[Sass](https://sass-lang.com/)** preprocessor in components: **[gulp-compo-sass](https://www.npmjs.com/package/gulp-compo-sass)**
+- Added support for **[Autoprefixer](https://github.com/postcss/autoprefixer)** in components: **[gulp-compo-autoprefixer](https://www.npmjs.com/package/gulp-compo-autoprefixer)**
+
+- Added support for **[Sass](https://sass-lang.com/)** preprocessor in components: **[gulp-compo-sass](https://www.npmjs.com/package/gulp-compo-sass)**
 
 <hr>
 
