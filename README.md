@@ -5,6 +5,7 @@
 **Components** (or **Compo.js** for short) is a reactive JavaScript library built on top of standard Web Components to quickly build client-tier web applications. The library is distributed under the MIT license, is small in size and does not require a lot of time to study it. Basic knowledge of HTML, CSS and JavaScript will be enough to start working with it.
 
 - **[Tutorial](http://www.compojs.ru/guide)**
+- **[Example](http://compojs.ru/example)**
 
 <hr>
 
