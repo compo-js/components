@@ -1,6 +1,6 @@
 /*!
  * Components.js v3.0.0
- * (c) 2020 compo.js@mail.ru
+ * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
  (function(modules) { 
