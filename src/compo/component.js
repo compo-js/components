@@ -85,7 +85,7 @@ export default class extends HTMLElement {
       // отключить наблюдение
       observer.disconnect()
 
-      // перебрать всез записи изменений
+      // перебрать все записи изменений
       mutationRecords.forEach(record => {
         // очистить хранилище исходных значений от удалённых узлов
         record.removedNodes.forEach(node => remove.call(this, node))
