@@ -8,7 +8,7 @@ export default function(node) {
   components.get(this).nodes.push(node)
 
   // если это узел специального атрибута 'c-hide'
-  if(node.nodeName === 'c-hide') switch(components.get(this).execute.next(`var{${Object.keys(this.$data).join(',')}}=this; \`\$\{${components.get(this).values.get(node)}\}\``).value) {
+  if(node.nodeName === 'c-hide') switch(components.get(this).execute.next(`\`\$\{${components.get(this).values.get(node)}\}\``).value) {
     // если значение преобразуется в ложное, то удалить атрибут 'hidden' из внешнего элемента
     case 'false': case 'undefined': case 'null': case '0': case '-0': case 'NaN': case '':
       node.ownerElement.removeAttribute('hidden')
@@ -28,8 +28,7 @@ export default function(node) {
     const execute = components.get(this).execute
 
     // создать генератор для обхода цикла текущего узла компонента
-    const cicle = execute.next(`var{${Object.keys(this.$data).join(',')}}=this;` +
-    '(function*(){' +
+    const cicle = execute.next('(function*(){' +
       'yield arguments[0]=yield function*(){' +
         'while(true)arguments[0]=yield eval(arguments[0])' +
       '}.bind(this);' +
@@ -59,7 +58,7 @@ export default function(node) {
   }
 
   // если это текстовый узел или узел стандартного атрибута
-  else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next(`var{${Object.keys(this.$data).join(',')}}=this; \`${components.get(this).values.get(node)}\``).value
+  else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next(`\`${components.get(this).values.get(node)}\``).value
 
   // удалить ссылку на обрабатываемый узел
   components.get(this).nodes.pop()

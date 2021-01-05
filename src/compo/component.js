@@ -59,10 +59,9 @@ export default class extends HTMLElement {
     component = component.content ? component.content : component
 
     // создать генератор, который станет средой выполнения исходных значений узлов компонента
-    components.get(this).execute = Function(
-      'return function*(){' +
-        'while(true)arguments[0]=yield eval(arguments[0])' +
-      '}.bind(this)').call(this.$data)()
+    components.get(this).execute = Function('return function*(){' +
+      'while(true)arguments[0]=yield eval(`var{${Object.keys(this).join(",")}}=this;${arguments[0]}`)' +
+    '}')().call(this.$data)
     
     // выполнить первый холостой вызов итератора
     components.get(this).execute.next()

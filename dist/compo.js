@@ -118,6 +118,26 @@ module.exports = _typeof;
  }),
  (function(module, exports) {
 
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+ }),
+ (function(module, exports) {
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -164,26 +184,6 @@ function _possibleConstructorReturn(self, call) {
 }
 
 module.exports = _possibleConstructorReturn;
-
- }),
- (function(module, exports) {
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-module.exports = _defineProperty;
 
  }),
  (function(module, exports) {
@@ -386,13 +386,13 @@ module.exports = _isNativeReflectConstruct;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-var classCallCheck = __webpack_require__(4);
+var classCallCheck = __webpack_require__(5);
 var classCallCheck_default = __webpack_require__.n(classCallCheck);
 
-var inherits = __webpack_require__(5);
+var inherits = __webpack_require__(6);
 var inherits_default = __webpack_require__.n(inherits);
 
-var possibleConstructorReturn = __webpack_require__(6);
+var possibleConstructorReturn = __webpack_require__(7);
 var possibleConstructorReturn_default = __webpack_require__.n(possibleConstructorReturn);
 
 var getPrototypeOf = __webpack_require__(2);
@@ -413,7 +413,7 @@ var assertThisInitialized_default = __webpack_require__.n(assertThisInitialized)
 var wrapNativeSuper = __webpack_require__(11);
 var wrapNativeSuper_default = __webpack_require__.n(wrapNativeSuper);
 
-var defineProperty = __webpack_require__(7);
+var defineProperty = __webpack_require__(4);
 var defineProperty_default = __webpack_require__.n(defineProperty);
 
 
@@ -497,7 +497,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  var handler = (function (node) {
   components.get(this).nodes.push(node); 
 
-  if (node.nodeName === 'c-hide') switch (components.get(this).execute.next("var{".concat(Object.keys(this.$data).join(','), "}=this; `${").concat(components.get(this).values.get(node), "}`")).value) {
+  if (node.nodeName === 'c-hide') switch (components.get(this).execute.next("`${".concat(components.get(this).values.get(node), "}`")).value) {
     case 'false':
     case 'undefined':
     case 'null':
@@ -517,7 +517,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       var execute = components.get(this).execute; 
 
-      var cicle = execute.next("var{".concat(Object.keys(this.$data).join(','), "}=this;") + '(function*(){' + 'yield arguments[0]=yield function*(){' + 'while(true)arguments[0]=yield eval(arguments[0])' + '}.bind(this);' + "for(var ".concat(components.get(this).values.get(node), ")yield arguments[0]()") + '}.bind(this))').value(); 
+      var cicle = execute.next('(function*(){' + 'yield arguments[0]=yield function*(){' + 'while(true)arguments[0]=yield eval(arguments[0])' + '}.bind(this);' + "for(var ".concat(components.get(this).values.get(node), ")yield arguments[0]()") + '}.bind(this))').value(); 
 
       components.get(this).execute = cicle.next().value(); 
 
@@ -549,7 +549,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       components.get(this).cicles["delete"](node);
     } 
-    else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next("var{".concat(Object.keys(this.$data).join(','), "}=this; `").concat(components.get(this).values.get(node), "`")).value; 
+    else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next("`".concat(components.get(this).values.get(node), "`")).value; 
 
   components.get(this).nodes.pop(); 
 
@@ -562,12 +562,18 @@ var _primitive;
 
 
 
+var isProxy = Symbol(); 
+
+var getValue = Symbol(); 
+
 var primitive = (_primitive = {}, defineProperty_default()(_primitive, Symbol.toPrimitive, function () {
-  return this.valueOf();
+  return this[getValue]();
 }), defineProperty_default()(_primitive, "toString", function toString() {
-  return this.valueOf();
+  return this[getValue]();
+}), defineProperty_default()(_primitive, "valueOf", function valueOf() {
+  return this[getValue]();
 }), defineProperty_default()(_primitive, "toJSON", function toJSON() {
-  return this.valueOf();
+  return this[getValue]();
 }), _primitive); 
 
 function notify(dep) {
@@ -611,14 +617,12 @@ function hooks(dep, node) {
 
       if (_value && typeof_default()(_value) === 'object' || typeof _value === 'function') return components.get(_this2).proxys.has(_value) ? components.get(_this2).proxys.get(_value) : observable.call(_this2, _value, deps[key], node); 
 
-      return components.get(_this2).nodes.length ? Object.create(primitive, {
-        valueOf: {
-          value: function value() {
-            return deps[key].add(node), _value;
-          },
-          writable: true
-        }
-      }) : _value;
+      return components.get(_this2).nodes.length ? Object.create(primitive, defineProperty_default()({}, getValue, {
+        value: function value() {
+          return deps[key].add(node), _value;
+        },
+        writable: true
+      })) : _value;
     },
     set: function set(target, key, value, receiver) {
       if (target.hasOwnProperty(key) && value === Reflect.get(target, key, receiver)) return true; 
@@ -642,7 +646,13 @@ function hooks(dep, node) {
 
 
 function observable(obj, dep, node) {
-  return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj);
+  if (obj.hasOwnProperty(getValue) || obj[isProxy]) return obj; 
+
+  var proxy = new Proxy(obj, hooks.call(this, dep, node)); 
+
+  proxy[isProxy] = true; 
+
+  return components.get(this).proxys.set(obj, proxy).get(obj);
 }
  var popstate = (function (events) {
   var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
@@ -743,7 +753,7 @@ var component_default = function (_HTMLElement) {
 
     component = component.content ? component.content : component; 
 
-    components.get(assertThisInitialized_default()(_this)).execute = Function('return function*(){' + 'while(true)arguments[0]=yield eval(arguments[0])' + '}.bind(this)').call(_this.$data)(); 
+    components.get(assertThisInitialized_default()(_this)).execute = Function('return function*(){' + 'while(true)arguments[0]=yield eval(`var{${Object.keys(this).join(",")}}=this;${arguments[0]}`)' + '}')().call(_this.$data); 
 
     components.get(assertThisInitialized_default()(_this)).execute.next(); 
 

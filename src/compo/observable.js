@@ -2,16 +2,25 @@ import {components} from './component'
 import handler from './handler'
 
 
-// прототип объекта возвращаемых примитивных значений
+// символ для добавления всем наблюдаемым объектам
+const isProxy = Symbol()
+
+// символ для получения примитивных значений
+const getValue = Symbol()
+
+// прототип объекта для примитивных значений
 const primitive = {
   [Symbol.toPrimitive]() {
-    return this.valueOf()
+    return this[getValue]()
   },
   toString() {
-    return this.valueOf()
+    return this[getValue]()
+  },
+  valueOf() {
+    return this[getValue]()
   },
   toJSON() {
-    return this.valueOf()
+    return this[getValue]()
   }
 }
 
@@ -69,7 +78,7 @@ function hooks(dep, node) {
         return components.get(this).proxys.has(value) ? components.get(this).proxys.get(value) : observable.call(this, value, deps[key], node)
 
       // если обрабатывается DOM компонента ,то вернуть объект примитивных значений, иначе, вернуть значение свойства как есть
-      return components.get(this).nodes.length ? Object.create(primitive, {valueOf: {value: () => (deps[key].add(node), value), writable: true}}) : value
+      return components.get(this).nodes.length ? Object.create(primitive, {[getValue]: {value: () => (deps[key].add(node), value), writable: true}}) : value
     },
 
     set: (target, key, value, receiver) => {
@@ -103,5 +112,15 @@ function hooks(dep, node) {
 
 // создаёт и возвращает для любого объекта новый наблюдаемый прокси
 export default function observable(obj, dep, node) {
-  return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj)
+  // если объект является примитивным значением, то вернуть его как есть
+  if(obj.hasOwnProperty(getValue) || obj[isProxy]) return obj
+
+  // создать новый наблюдаемый прокси
+  const proxy =  new Proxy(obj, hooks.call(this, dep, node))
+
+  // добавить наблюдаемому прокси символ
+  proxy[isProxy] = true
+
+  // добавить прокси в хранилище и вернуть его в качестве результата
+  return components.get(this).proxys.set(obj, proxy).get(obj)
 }
