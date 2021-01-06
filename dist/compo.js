@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.1.0
+ * Components.js v3.1.2
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -625,7 +625,13 @@ function hooks(dep, node) {
       })) : _value;
     },
     set: function set(target, key, value, receiver) {
-      if (target.hasOwnProperty(key) && value === Reflect.get(target, key, receiver)) return true; 
+      var oldValue = Reflect.get(target, key, receiver); 
+
+      if (target.hasOwnProperty(key) && value === oldValue) return true; 
+
+      components.get(_this2).depends["delete"](oldValue); 
+
+      components.get(_this2).proxys["delete"](oldValue); 
 
       if (!Reflect.set(target, key, value, receiver)) return false; 
 
@@ -640,19 +646,20 @@ function hooks(dep, node) {
       if (dep) notify.call(_this2, dep); 
 
       return true;
+    },
+    has: function has(target, key) {
+      if (key === isProxy) return true; 
+
+      return key in target ? true : false;
     }
   };
 } 
 
 
 function observable(obj, dep, node) {
-  if (obj.hasOwnProperty(getValue) || obj[isProxy]) return obj; 
+  if (obj.hasOwnProperty(getValue) || Reflect.has(obj, isProxy)) return obj; 
 
-  var proxy = new Proxy(obj, hooks.call(this, dep, node)); 
-
-  proxy[isProxy] = true; 
-
-  return components.get(this).proxys.set(obj, proxy).get(obj);
+  return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj);
 }
  var popstate = (function (events) {
   var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
