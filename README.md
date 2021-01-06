@@ -11,17 +11,7 @@
 
 ## Upgrade to version 3.1.0
 
-**Fixed critical bug in inner [loops](http://compojs.ru/guide#Циклы)**!
-
-<hr>
-
-- **[Build](https://vk.com/compojs?w=wall627015308_52%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)** for **[BEM](https://en.bem.info/methodology/css/)**:  **[new-pug-bem-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-bem-sass-autoprefixer.zip)**
-
-- **[Build](https://vk.com/compojs?w=wall627015308_51%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)**:  **[new-pug-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-sass-autoprefixer.zip)**
-
-- Added support for **[Autoprefixer](https://github.com/postcss/autoprefixer)** in components: **[gulp-compo-autoprefixer](https://www.npmjs.com/package/gulp-compo-autoprefixer)**
-
-- Added support for **[Sass](https://sass-lang.com/)** preprocessor in components: **[gulp-compo-sass](https://www.npmjs.com/package/gulp-compo-sass)**
+1) **Fixed critical bug in inner [loops](http://compojs.ru/guide#Циклы)**!!!
 
 <hr>
 
@@ -32,6 +22,16 @@
 2) All inline and external component **\<template>** tags now use a single **[title](http://compojs.ru/guide#Начало-работы)** attribute instead of the **data-name** and **name** attributes.
 
 As with the second version, the test application is still **[validated](https://validator.w3.org/nu/?doc=http%3A%2F%2Fcompojs.ru%2Fdist%2Ffiles%2Fexample.html)**.
+
+<hr>
+
+- **[Build](https://vk.com/compojs?w=wall627015308_52%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)** for **[BEM](https://en.bem.info/methodology/css/)**:  **[new-pug-bem-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-bem-sass-autoprefixer.zip)**
+
+- **[Build](https://vk.com/compojs?w=wall627015308_51%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)**:  **[new-pug-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-sass-autoprefixer.zip)**
+
+- Added support for **[Autoprefixer](https://github.com/postcss/autoprefixer)** in components: **[gulp-compo-autoprefixer](https://www.npmjs.com/package/gulp-compo-autoprefixer)**
+
+- Added support for **[Sass](https://sass-lang.com/)** preprocessor in components: **[gulp-compo-sass](https://www.npmjs.com/package/gulp-compo-sass)**
 
 <hr>
 
