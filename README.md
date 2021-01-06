@@ -9,6 +9,12 @@
 
 <hr>
 
+## Upgrade to version 3.1.0
+
+**Fixed critical bug in inner [loops](http://compojs.ru/guide#Циклы)**!
+
+<hr>
+
 - **[Build](https://vk.com/compojs?w=wall627015308_52%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)** for **[BEM](https://en.bem.info/methodology/css/)**:  **[new-pug-bem-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-bem-sass-autoprefixer.zip)**
 
 - **[Build](https://vk.com/compojs?w=wall627015308_51%2Fall)** for: **[Pug](https://pugjs.org/api/getting-started.html)**, **[Sass](https://sass-lang.com/)** and **[Autoprefixer](https://github.com/postcss/autoprefixer)**:  **[new-pug-sass-autoprefixer.zip](http://compojs.ru/dist/files/new-pug-sass-autoprefixer.zip)**
