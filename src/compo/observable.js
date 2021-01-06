@@ -52,6 +52,9 @@ function hooks(dep, node) {
     },
     
     get: (target, key, receiver) => {
+      // если запрашивается свойство 'isProxy', то вернуть истину
+      if(key === isProxy) return true
+
       // если свойство не является методом 'toString' и собственным свойством объекта, то вернуть его значение
       if(key !== 'toString' && !target.hasOwnProperty(key)) return Reflect.get(target, key, receiver)
 
@@ -114,13 +117,6 @@ function hooks(dep, node) {
 
       // вернуть успешность операции присвоения
       return true
-    },
-
-    has: (target, key) => {
-      // если запрашивается свойство 'isProxy', то вернуть 'true'
-      if(key === isProxy) return true
-      // если свойство содержится в объекте, то вернуть 'true', иначе 'false'
-      return key in target ? true : false
     }
   }
 }
@@ -128,8 +124,8 @@ function hooks(dep, node) {
 
 // создаёт и возвращает для любого объекта новый наблюдаемый прокси
 export default function observable(obj, dep, node) {
-  // если объект является примитивным значением или прокси, то вернуть его как есть
-  if(obj.hasOwnProperty(getValue) || Reflect.has(obj, isProxy)) return obj
+  // если объект является прокси или примитивным значением, то вернуть его как есть
+  if(Reflect.get(obj, isProxy) || obj.hasOwnProperty(getValue)) return obj
 
   // создать новый наблюдаемый прокси, добавить его в хранилище и вернуть в качестве результата
   return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj)

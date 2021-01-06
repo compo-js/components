@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.1.2
+ * Components.js v3.1.4
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -600,6 +600,8 @@ function hooks(dep, node) {
       return target.apply(thisArg, args);
     },
     get: function get(target, key, receiver) {
+      if (key === isProxy) return true; 
+
       if (key !== 'toString' && !target.hasOwnProperty(key)) return Reflect.get(target, key, receiver); 
 
       if (components.get(_this2).nodes.length) node = components.get(_this2).nodes[0]; 
@@ -646,18 +648,13 @@ function hooks(dep, node) {
       if (dep) notify.call(_this2, dep); 
 
       return true;
-    },
-    has: function has(target, key) {
-      if (key === isProxy) return true; 
-
-      return key in target ? true : false;
     }
   };
 } 
 
 
 function observable(obj, dep, node) {
-  if (obj.hasOwnProperty(getValue) || Reflect.has(obj, isProxy)) return obj; 
+  if (Reflect.get(obj, isProxy) || obj.hasOwnProperty(getValue)) return obj; 
 
   return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj);
 }
