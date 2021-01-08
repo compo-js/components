@@ -66,14 +66,14 @@ export default class extends HTMLElement {
 
     // создать генератор, который станет средой выполнения узлов компонента
     components.get(this).execute = Function('return function*(){' +
-      'while(true)arguments[0]=yield eval(`${arguments[0]}`)' +
+      'while(true)arguments[0]=yield eval(`var{${Object.keys(this).join(",")}}=this;${arguments[0]}`)' +
     '}')().call(this.$data)
 
     // выполнить первый холостой вызов итератора
     components.get(this).execute.next()
 
-    // выполнить скрипты компонента в контексте объекта данных
-    Function(scripts).call(this.$data)
+    // выполнить скрипты компонента в контексте генератора
+    components.get(this).execute.next(scripts)
 
     // сделать реактивными узлы теневого DOM компонента
     reactive.call(this, this.$root)

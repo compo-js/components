@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.1.5
+ * Components.js v3.1.7
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -639,8 +639,6 @@ function hooks(dep, node) {
 
       if (components.get(_this2).nodes.length) return true; 
 
-      if (target === components.get(_this2).object) components.get(_this2).execute.next("var{".concat(Object.keys(_this2.$data).join(','), "}=this")); 
-
       var deps = components.get(_this2).depends.get(target); 
 
       if (!deps) return true; 
@@ -768,11 +766,11 @@ var component_default = function (_HTMLElement) {
       return _this.$root.append(node);
     }); 
 
-    components.get(assertThisInitialized_default()(_this)).execute = Function('return function*(){' + 'while(true)arguments[0]=yield eval(`${arguments[0]}`)' + '}')().call(_this.$data); 
+    components.get(assertThisInitialized_default()(_this)).execute = Function('return function*(){' + 'while(true)arguments[0]=yield eval(`var{${Object.keys(this).join(",")}}=this;${arguments[0]}`)' + '}')().call(_this.$data); 
 
     components.get(assertThisInitialized_default()(_this)).execute.next(); 
 
-    Function(scripts).call(_this.$data); 
+    components.get(assertThisInitialized_default()(_this)).execute.next(scripts); 
 
     reactive.call(assertThisInitialized_default()(_this), _this.$root); 
 

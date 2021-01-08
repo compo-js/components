@@ -53,7 +53,7 @@ function comments(done) {
   if(mode === 'production') return gulp.src('dist/*.js')
     .pipe(each(function(content, file, callback) {
       callback(null, `/*!
- * Components.js v3.1.5
+ * Components.js v3.1.7
  * (c) ${new Date().getFullYear()} compo.js@mail.ru
  * Released under the MIT License.
  */\n` + content)
