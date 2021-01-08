@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.1.7
+ * Components.js v3.1.10
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
