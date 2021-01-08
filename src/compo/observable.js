@@ -103,6 +103,9 @@ function hooks(dep, node) {
       // если обрабатывается узел компонента, то выйти и вернуть успешность операции
       if(components.get(this).nodes.length) return true
 
+      // если 'target' является объектом данных, то присвоить переменным генератора значения его свойств
+      if(target === components.get(this).object) components.get(this).execute.next(`var{${Object.keys(this.$data).join(',')}}=this`)
+
       // получить объект зависимых узлов для всех свойств 'target'
       const deps = components.get(this).depends.get(target)
 

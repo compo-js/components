@@ -58,22 +58,22 @@ export default class extends HTMLElement {
     // если у шаблона компонента есть свойство 'content', то использовать его в качестве компонента
     component = component.content ? component.content : component
 
-    // создать генератор, который станет средой выполнения исходных значений узлов компонента
-    components.get(this).execute = Function('return function*(){' +
-      'while(true)arguments[0]=yield eval(`var{${Object.keys(this).join(",")}}=this;${arguments[0]}`)' +
-    '}')().call(this.$data)
-    
-    // выполнить первый холостой вызов итератора
-    components.get(this).execute.next()
-
     // удалить из шаблона компонента скрипты и сохранить их в переменной
     const scripts = [...component.querySelectorAll('script')].map(script => component.removeChild(script).innerHTML).join('')
 
     // перенести содержимое шаблона компонента в его теневой DOM
     ![...component.childNodes].forEach(node => this.$root.append(node))
-    
-    // выполнить скрипты компонента в итераторе
-    components.get(this).execute.next(scripts)
+
+    // создать генератор, который станет средой выполнения узлов компонента
+    components.get(this).execute = Function('return function*(){' +
+      'while(true)arguments[0]=yield eval(`${arguments[0]}`)' +
+    '}')().call(this.$data)
+
+    // выполнить первый холостой вызов итератора
+    components.get(this).execute.next()
+
+    // выполнить скрипты компонента в контексте объекта данных
+    Function(scripts).call(this.$data)
 
     // сделать реактивными узлы теневого DOM компонента
     reactive.call(this, this.$root)
