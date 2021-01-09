@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.1.10
+ * Components.js v3.2.0
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -97,6 +97,26 @@ module.exports = _getPrototypeOf;
  }),
  (function(module, exports) {
 
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+ }),
+ (function(module, exports) {
+
 function _typeof(obj) {
   "@babel/helpers - typeof";
 
@@ -114,26 +134,6 @@ function _typeof(obj) {
 }
 
 module.exports = _typeof;
-
- }),
- (function(module, exports) {
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-module.exports = _defineProperty;
 
  }),
  (function(module, exports) {
@@ -171,7 +171,7 @@ module.exports = _inherits;
  }),
  (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(3);
+var _typeof = __webpack_require__(4);
 
 var assertThisInitialized = __webpack_require__(0);
 
@@ -401,7 +401,7 @@ var getPrototypeOf_default = __webpack_require__.n(getPrototypeOf);
 var toConsumableArray = __webpack_require__(1);
 var toConsumableArray_default = __webpack_require__.n(toConsumableArray);
 
-var helpers_typeof = __webpack_require__(3);
+var helpers_typeof = __webpack_require__(4);
 var typeof_default = __webpack_require__.n(helpers_typeof);
 
 var createClass = __webpack_require__(10);
@@ -413,7 +413,7 @@ var assertThisInitialized_default = __webpack_require__.n(assertThisInitialized)
 var wrapNativeSuper = __webpack_require__(11);
 var wrapNativeSuper_default = __webpack_require__.n(wrapNativeSuper);
 
-var defineProperty = __webpack_require__(4);
+var defineProperty = __webpack_require__(3);
 var defineProperty_default = __webpack_require__.n(defineProperty);
 
 
@@ -606,8 +606,6 @@ function hooks(dep, node) {
 
       if (components.get(_this2).nodes.length) node = components.get(_this2).nodes[0]; 
 
-      if (typeof_default()(dep) === 'object' && node) dep.add(node); 
-
       var _value = Reflect.get(target, key, receiver); 
 
 
@@ -617,7 +615,11 @@ function hooks(dep, node) {
 
       if (!deps[key]) deps[key] = new Set(); 
 
-      if (_value && typeof_default()(_value) === 'object' || typeof _value === 'function') return components.get(_this2).proxys.has(_value) ? components.get(_this2).proxys.get(_value) : observable.call(_this2, _value, deps[key], node); 
+      if (_value && typeof_default()(_value) === 'object' || typeof _value === 'function') return new Proxy(components.get(_this2).proxys.has(_value) ? components.get(_this2).proxys.get(_value) : observable.call(_this2, _value, deps[key], node), {
+        get: function get(target, prop, receiver) {
+          return deps[key].add(node), Reflect.get(target, prop, receiver);
+        }
+      }); 
 
       return components.get(_this2).nodes.length ? Object.create(primitive, defineProperty_default()({}, getValue, {
         value: function value() {

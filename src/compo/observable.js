@@ -60,9 +60,6 @@ function hooks(dep, node) {
 
       // сохранить обрабатываемый в текущий момент узел компонента
       if(components.get(this).nodes.length) node = components.get(this).nodes[0]
-      
-      // добавить обрабатываемый узел во множество зависимых узлов для 'target'
-      if(typeof dep === 'object' && node) dep.add(node)
 
       // сохранить значение запрашиваемого свойства
       const value = Reflect.get(target, key, receiver)
@@ -78,7 +75,9 @@ function hooks(dep, node) {
 
       // если 'key' истина и является объектом или функцией, то вернуть существующий или новый наблюдаемый прокси
       if(value && typeof value === 'object' || typeof value === 'function')
-        return components.get(this).proxys.has(value) ? components.get(this).proxys.get(value) : observable.call(this, value, deps[key], node)
+        return new Proxy(components.get(this).proxys.has(value) ? components.get(this).proxys.get(value) : observable.call(this, value, deps[key], node), {
+          get: (target, prop, receiver) => (deps[key].add(node), Reflect.get(target, prop, receiver))
+        })
 
       // если обрабатывается DOM компонента ,то вернуть объект примитивных значений, иначе, вернуть значение свойства как есть
       return components.get(this).nodes.length ? Object.create(primitive, {[getValue]: {value: () => (deps[key].add(node), value), writable: true}}) : value
