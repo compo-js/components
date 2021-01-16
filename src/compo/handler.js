@@ -8,7 +8,7 @@ export default function(node) {
   components.get(this).nodes.push(node)
 
   // если это узел специального атрибута 'c-hide'
-  if(node.nodeName === 'c-hide') switch(components.get(this).execute.next(`\`\$\{${components.get(this).values.get(node)}\}\``).value) {
+  if(node.nodeName === 'c-hide') switch(components.get(this).execute.next(components.get(this).values.get(node)).value) {
     // если значение преобразуется в ложное, то удалить атрибут 'hidden' из внешнего элемента
     case 'false': case 'undefined': case 'null': case '0': case '-0': case 'NaN': case '':
       node.ownerElement.removeAttribute('hidden')
@@ -21,44 +21,68 @@ export default function(node) {
   
   // если это узел специального атрибута 'c-for'
   else if(node.nodeName === 'c-for') {
-    // задать начальное значение индекса для текущего цикла
-    components.get(this).cicles.set(node.ownerElement, 0)
-    
-    // сохранить ссылку на текущий генератор выполнения узлов компонента
-    const execute = components.get(this).execute
+    // задать начальное значение индекса для узла текущего цикла
+    components.get(this).index.set(node.ownerElement, 0)
 
-    // создать генератор для обхода цикла текущего узла компонента
-    const cicle = execute.next('(function*(){' +
-      'yield arguments[0]=yield function*(){' +
-        'while(true)arguments[0]=yield eval(arguments[0])' +
-      '}.bind(this);' +
-      `for(var ${components.get(this).values.get(node)})yield arguments[0]()` +
-    '}.bind(this))').value()
+    // если для цикла не существует итераторов выполнения
+    if(!components.get(this).iterators.has(node)) {
+      // сохранить текущий итератор выполнения узлов компонента
+      const execute = components.get(this).execute
 
-    // создать генератор, который станет средой выполнения узлов компонента в контексте генератора цикла
-    components.get(this).execute = cicle.next().value()
+      // создать внешний генератор цикла, который станет средой выполнения для внутреннего генератора
+      components.get(this).iterators.set(node, {outer: execute.next('(function*(){' +
+        'arguments[0]=yield function*(){' +
+          'while(true)arguments[0]=yield typeof arguments[0]==="function"?arguments[0]():eval(arguments[0])' +
+        `};while(true){yield;for(var ${components.get(this).values.get(node)})arguments[0]()}` +
+      '})').value.call(this.$data)})
 
-    // выполнить первый холостой вызов нового итератора
-    components.get(this).execute.next()
+      // создать внутренний генератор цикла, который станет средой выполнения узлов компонента
+      components.get(this).execute = components.get(this).iterators.get(node).outer.next().value.call(this.$data)
 
-    // передать функцию 'update' для вызова на каждой итерации генератора цикла
-    cicle.next(update.bind(this, node.ownerElement))
+      // выполнить первый холостой вызов внутреннего итератора
+      components.get(this).execute.next()
 
-    // выполнить итерацию цикла в контексте генератора
-    for(const iter of cicle);
+      // передать функцию 'update' во внешний итератор, для её вызова на каждой итерации цикла
+      components.get(this).iterators.get(node).outer.next(update.bind(this, node.ownerElement))
+      
+      // перебрать цикл во внешнем итераторе выполнения
+      components.get(this).iterators.get(node).outer.next()
 
-    // восстановить текущий генератор выполнения узлов компонента
-    components.get(this).execute = execute
+      // сохранить внутренний итератор выполнения цикла
+      components.get(this).iterators.get(node).inner = components.get(this).execute
+
+      // восстановить текущий итератор выполнения узлов компонента
+      components.get(this).execute = execute
+    }
+
+    // иначе, если итераторы выполнения для цикла уже созданы
+    else {
+      // сохранить текущий итератор выполнения узлов компонента
+      const execute = components.get(this).execute
+
+      // обновить переменные ключей объекта данных
+      components.get(this).execute.next(`({${Object.keys(this.$data).join(',')}}=this)`)
+
+      // сделать текущим внутренний итератор выполнения цикла
+      components.get(this).execute = components.get(this).iterators.get(node).inner
+
+      // перебрать цикл во внешнем итераторе выполнения
+      components.get(this).iterators.get(node).outer.next()
+
+      // восстановить текущий итератор выполнения узлов компонента
+      components.get(this).execute = execute
+    }
 
     // удалить избыточные узлы цикла, если такие имеются
-    for(let i = components.get(this).cicles.get(node.ownerElement), length = node.ownerElement.childNodes.length; i < length; i++) node.ownerElement.lastChild.remove()
+    for(let i = components.get(this).index.get(node.ownerElement), length =
+      node.ownerElement.childNodes.length; i < length; i++) node.ownerElement.lastChild.remove()
 
-    // удалить индекс после выполнения текущего цикла
-    components.get(this).cicles.delete(node)
+    // удалить узел после выполнения текущего цикла
+    components.get(this).index.delete(node)
   }
 
   // если это текстовый узел или узел стандартного атрибута
-  else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next(`\`${components.get(this).values.get(node)}\``).value
+  else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next(components.get(this).values.get(node)).value
 
   // удалить ссылку на обрабатываемый узел
   components.get(this).nodes.pop()

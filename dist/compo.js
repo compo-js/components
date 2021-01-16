@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.3.1
+ * Components.js v3.3.2
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -428,36 +428,41 @@ function clear(node) {
 var regOn = /^on/; 
 
 function reactive(node) {
-  if (node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove(); 
-  else if (node.nodeType === 2 || node.nodeType === 3) {
-      components.get(this).values.set(node, node[node.nodeType === 2 ? 'value' : 'data']); 
+  if (node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove();
+  var data = node[node.nodeType === 2 ? 'value' : 'data']; 
 
-      if (node.nodeType === 2) {
-        if (regOn.test(node.nodeName)) Object.defineProperty(node.ownerElement, '$data', {
-          value: this.$data
+  if (node.nodeType === 2 || node.nodeType === 3) {
+    if (node.nodeName === 'c-hide') components.get(this).values.set(node, components.get(this).execute.next("()=>`${".concat(node.value, "}`")).value); 
+    else if (node.nodeName === 'c-for') {
+        components.get(this).values.set(node, node.value); 
+
+        var template = new DocumentFragment(); 
+
+        !toConsumableArray_default()(clear(node.ownerElement).childNodes).forEach(function (node) {
+          return template.append(node);
         }); 
-        else if (node.nodeName === 'c-for') {
-            var template = new DocumentFragment(); 
 
-            !toConsumableArray_default()(clear(node.ownerElement).childNodes).forEach(function (node) {
-              return template.append(node);
-            }); 
-
-            components.get(this).values.set(node.ownerElement, template);
-          }
+        components.get(this).values.set(node.ownerElement, template);
       } 
+      else components.get(this).values.set(node, components.get(this).execute.next("()=>`".concat(node[node.nodeType === 2 ? 'value' : 'data'], "`")).value); 
 
+    if (regOn.test(node.nodeName)) Object.defineProperty(node.ownerElement, '$data', {
+      value: this.$data
+    }); 
 
-      handler.call(this, node);
-    } else {
-      if (node.attributes) for (var i = 0, length = node.attributes.length; i < length; i++) {
-        reactive.call(this, node.attributes[i]);
-      } 
+    var result = handler.call(this, node); 
 
-      if (!node.attributes || !node.attributes['c-for']) for (var _i = 0; _i < node.childNodes.length; _i++) {
-        reactive.call(this, node.childNodes[_i]) || _i--;
-      }
+    if (node.nodeName !== 'c-hide' && node.nodeName !== 'c-for' && data === result[result.nodeType === 2 ? 'value' : 'data']) components.get(this).values["delete"](node);
+  } else {
+    if (node.attributes) for (var i = 0, length = node.attributes.length; i < length; i++) {
+      reactive.call(this, node.attributes[i]);
+    } 
+
+    if (!node.attributes || !node.attributes['c-for']) for (var _i = 0; _i < node.childNodes.length; _i++) {
+      reactive.call(this, node.childNodes[_i]) || _i--;
     }
+  }
+
   return node; 
 }
 
@@ -476,7 +481,7 @@ function change(node) {
 
 
  var update = (function ($parent) {
-  var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : components.get(this).cicles.get($parent);
+  var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : components.get(this).index.get($parent);
   var newNode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : components.get(this).values.get($parent);
   var oldNode = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : $parent.childNodes[index];
   if (!oldNode) $parent.append(reactive.call(this, newNode.cloneNode(true))); 
@@ -484,20 +489,14 @@ function change(node) {
       change.call(this, $parent.childNodes[i + index]);
     } 
 
-  components.get(this).cicles.set($parent, index + newNode.childNodes.length);
+  components.get(this).index.set($parent, index + newNode.childNodes.length);
 });
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 
 
  var handler = (function (node) {
   components.get(this).nodes.push(node); 
 
-  if (node.nodeName === 'c-hide') switch (components.get(this).execute.next("`${".concat(components.get(this).values.get(node), "}`")).value) {
+  if (node.nodeName === 'c-hide') switch (components.get(this).execute.next(components.get(this).values.get(node)).value) {
     case 'false':
     case 'undefined':
     case 'null':
@@ -513,43 +512,48 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       break;
   } 
   else if (node.nodeName === 'c-for') {
-      components.get(this).cicles.set(node.ownerElement, 0); 
+      components.get(this).index.set(node.ownerElement, 0); 
 
-      var execute = components.get(this).execute; 
+      if (!components.get(this).iterators.has(node)) {
+        var execute = components.get(this).execute; 
 
-      var cicle = execute.next('(function*(){' + 'yield arguments[0]=yield function*(){' + 'while(true)arguments[0]=yield eval(arguments[0])' + '}.bind(this);' + "for(var ".concat(components.get(this).values.get(node), ")yield arguments[0]()") + '}.bind(this))').value(); 
+        components.get(this).iterators.set(node, {
+          outer: execute.next('(function*(){' + 'arguments[0]=yield function*(){' + 'while(true)arguments[0]=yield typeof arguments[0]==="function"?arguments[0]():eval(arguments[0])' + "};while(true){yield;for(var ".concat(components.get(this).values.get(node), ")arguments[0]()}") + '})').value.call(this.$data)
+        }); 
 
-      components.get(this).execute = cicle.next().value(); 
+        components.get(this).execute = components.get(this).iterators.get(node).outer.next().value.call(this.$data); 
 
-      components.get(this).execute.next(); 
+        components.get(this).execute.next(); 
 
-      cicle.next(update.bind(this, node.ownerElement)); 
+        components.get(this).iterators.get(node).outer.next(update.bind(this, node.ownerElement)); 
 
-      var _iterator = _createForOfIteratorHelper(cicle),
-          _step;
+        components.get(this).iterators.get(node).outer.next(); 
 
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var iter = _step.value;
-          ;
+        components.get(this).iterators.get(node).inner = components.get(this).execute; 
+
+        components.get(this).execute = execute;
+      } 
+      else {
+          var _execute = components.get(this).execute; 
+
+          components.get(this).execute.next("({".concat(Object.keys(this.$data).join(','), "}=this)")); 
+
+          components.get(this).execute = components.get(this).iterators.get(node).inner; 
+
+          components.get(this).iterators.get(node).outer.next(); 
+
+          components.get(this).execute = _execute;
         } 
 
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
 
-      components.get(this).execute = execute; 
-
-      for (var i = components.get(this).cicles.get(node.ownerElement), length = node.ownerElement.childNodes.length; i < length; i++) {
+      for (var i = components.get(this).index.get(node.ownerElement), length = node.ownerElement.childNodes.length; i < length; i++) {
         node.ownerElement.lastChild.remove();
       } 
 
 
-      components.get(this).cicles["delete"](node);
+      components.get(this).index["delete"](node);
     } 
-    else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next("`".concat(components.get(this).values.get(node), "`")).value; 
+    else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next(components.get(this).values.get(node)).value; 
 
   components.get(this).nodes.pop(); 
 
@@ -737,7 +741,9 @@ var component_default = function (_HTMLElement) {
 
     components.get(assertThisInitialized_default()(_this)).proxys = new WeakMap(); 
 
-    components.get(assertThisInitialized_default()(_this)).cicles = new WeakMap(); 
+    components.get(assertThisInitialized_default()(_this)).iterators = new WeakMap(); 
+
+    components.get(assertThisInitialized_default()(_this)).index = new WeakMap(); 
 
     components.get(assertThisInitialized_default()(_this)).object = {}; 
 
@@ -768,11 +774,11 @@ var component_default = function (_HTMLElement) {
       return _this.$root.append(node);
     }); 
 
-    components.get(assertThisInitialized_default()(_this)).execute = Function('return function*(){' + 'while(true)arguments[0]=yield eval(`var{${Object.keys(this).join(",")}}=this;${arguments[0]}`)' + '}')().call(_this.$data); 
+    Function(scripts).call(_this.$data); 
+
+    components.get(assertThisInitialized_default()(_this)).execute = Function("return function*(".concat(Object.keys(_this.$data).join(','), "){") + "while(true)arguments[0]=yield({".concat(Object.keys(_this.$data).join(','), "}=this,typeof arguments[0]==='function'?arguments[0]():eval(arguments[0]))") + '}')().call(_this.$data); 
 
     components.get(assertThisInitialized_default()(_this)).execute.next(); 
-
-    components.get(assertThisInitialized_default()(_this)).execute.next(scripts); 
 
     reactive.call(assertThisInitialized_default()(_this), _this.$root); 
 
