@@ -11,6 +11,7 @@ export default function reactive(node) {
   // если узел является комментарием или пустым текстовым узлом, то удалить его из компонента
   if(node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove()
 
+  // сохранить исходное значение узла
   const data = node[node.nodeType === 2 ? 'value' : 'data']
 
   // если узел является атрибутом или текстовым узлом, то сохранить и вычислить его значение
@@ -40,7 +41,11 @@ export default function reactive(node) {
     if(regOn.test(node.nodeName)) Object.defineProperty(node.ownerElement, '$data', {value: this.$data})
 
     // вычислить исходное значение узла
-    handler.call(this, node)
+    const result = handler.call(this, node)
+
+    // если узел не является специальным атрибутом и исходное и вычисленное значения равны
+    if(node.nodeName !== 'c-for' && node.nodeName !== 'c-hide' && data ===
+      result[result.nodeType === 2 ? 'value' : 'data']) components.get(this).values.delete(node)
   }
 
   else {

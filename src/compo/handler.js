@@ -82,7 +82,8 @@ export default function(node) {
   }
 
   // если это текстовый узел или узел стандартного атрибута
-  else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next(components.get(this).values.get(node)).value
+  else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).values.has(node) ?
+    components.get(this).execute.next(components.get(this).values.get(node)).value : node[node.nodeType === 2 ? 'value' : 'data']
 
   // удалить ссылку на обрабатываемый узел
   components.get(this).nodes.pop()

@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.4.0
+ * Components.js v3.4.1
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -428,7 +428,8 @@ function clear(node) {
 var regOn = /^on/; 
 
 function reactive(node) {
-  if (node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove();
+  if (node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove(); 
+
   var data = node[node.nodeType === 2 ? 'value' : 'data']; 
 
   if (node.nodeType === 2 || node.nodeType === 3) {
@@ -450,7 +451,9 @@ function reactive(node) {
       value: this.$data
     }); 
 
-    handler.call(this, node);
+    var result = handler.call(this, node); 
+
+    if (node.nodeName !== 'c-for' && node.nodeName !== 'c-hide' && data === result[result.nodeType === 2 ? 'value' : 'data']) components.get(this).values["delete"](node);
   } else {
     if (node.attributes) for (var i = 0, length = node.attributes.length; i < length; i++) {
       reactive.call(this, node.attributes[i]);
@@ -551,7 +554,7 @@ function change(node) {
 
       components.get(this).index["delete"](node);
     } 
-    else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).execute.next(components.get(this).values.get(node)).value; 
+    else node[node.nodeType === 2 ? 'value' : 'data'] = components.get(this).values.has(node) ? components.get(this).execute.next(components.get(this).values.get(node)).value : node[node.nodeType === 2 ? 'value' : 'data']; 
 
   components.get(this).nodes.pop(); 
 
