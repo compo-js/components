@@ -27,11 +27,31 @@
 
   <br>
 
+  <div c-for="obj of users">
+    <div class="user">
+      <p>
+        <b>Имя</b>: ${ obj.name }
+      </p>
+      <p>
+        <b>Возраст</b>: ${ obj.age }
+      </p>
+      <div c-for="category in obj.skills">
+        <b>${ category[0].toUpperCase() + category.slice(1) }</b>:
+        <ol c-for="i = 0; i < obj.skills[category].length; i++">
+          <li>${ obj.skills[category][i] }</li>
+        </ol>
+      </div>
+    </div>
+    <hr>
+  </div>
+
+  <br>
+
   <pre>${ this.users }</pre>
 
-  <div c-for="user of users">
+  <!-- <div c-for="user of users">
     <p c-for="prop in user">${ user[prop] } </p>
-  </div>
+  </div> -->
 
   <style>
     h1{
@@ -53,18 +73,45 @@
 
     this.arr2 = ['A', 'B', 'C']
 
+    // this.users = [
+    //   {
+    //     name: 'Дима',
+    //     age: 28
+    //   },
+    //   {
+    //     name: 'Оля',
+    //     age: 32
+    //   },
+    //   {
+    //     name: 'Артур',
+    //     age: 54
+    //   }
+    // ]
+
     this.users = [
       {
-        name: 'Дима',
-        age: 28
+        name: 'Дмитрий',
+        age: 28,
+        skills: {
+          frontend: ['HTML', 'CSS'],
+          backend: ['PHP', 'Ruby', 'MySQL']
+        }
       },
       {
-        name: 'Оля',
-        age: 32
+        name: 'Ольга',
+        age: 25,
+        skills: {
+          frontend: ['HTML', 'JavaScript'],
+          backend: ['PHP']
+        }
       },
       {
-        name: 'Артур',
-        age: 54
+        name: 'Максим',
+        age: 30,
+        skills: {
+          frontend: ['HTML', 'CSS', 'JavaScript', 'jQuery'],
+          backend: ['Ruby', 'MySQL']
+        }
       }
     ]
 

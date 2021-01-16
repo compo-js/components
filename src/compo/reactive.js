@@ -40,11 +40,7 @@ export default function reactive(node) {
     if(regOn.test(node.nodeName)) Object.defineProperty(node.ownerElement, '$data', {value: this.$data})
 
     // вычислить исходное значение узла
-    const result = handler.call(this, node)
-
-    // если это не узел специальных атрибутов и вычисленное значение равно исходному, то удалить узел из хранилища исходных значений
-    if(node.nodeName !== 'c-hide' && node.nodeName !== 'c-for' && data ===
-      result[result.nodeType === 2 ? 'value' : 'data']) components.get(this).values.delete(node)
+    handler.call(this, node)
   }
 
   else {

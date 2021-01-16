@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.3.2
+ * Components.js v3.4.0
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -450,9 +450,7 @@ function reactive(node) {
       value: this.$data
     }); 
 
-    var result = handler.call(this, node); 
-
-    if (node.nodeName !== 'c-hide' && node.nodeName !== 'c-for' && data === result[result.nodeType === 2 ? 'value' : 'data']) components.get(this).values["delete"](node);
+    handler.call(this, node);
   } else {
     if (node.attributes) for (var i = 0, length = node.attributes.length; i < length; i++) {
       reactive.call(this, node.attributes[i]);
