@@ -4,7 +4,7 @@ import change from './change'
 
 
 // выполняет обновление DOM компонента
-export default function($parent, index = components.get(this).index.get($parent),
+export default function($parent, index = components.get(this).cicles.get($parent),
    newNode = components.get(this).values.get($parent), oldNode = $parent.childNodes[index]) {
 
   // если в цикле нет новой ноды
@@ -14,5 +14,5 @@ export default function($parent, index = components.get(this).index.get($parent)
   else for(let i = 0, length = newNode.childNodes.length; i < length; i++) change.call(this, $parent.childNodes[i + index])
 
   // увеличить смещение индекса в текущем цикле на количество элементов в его шаблоне
-  components.get(this).index.set($parent, index + newNode.childNodes.length)
+  components.get(this).cicles.set($parent, index + newNode.childNodes.length)
 }

@@ -32,11 +32,8 @@ export default class extends HTMLElement {
     // создать хранилище наблюдаемых прокси для объектов компонента
     components.get(this).proxys = new WeakMap()
 
-    // создать хранилище итераторов циклов компонента
-    components.get(this).iterators = new WeakMap()
-
     // создать хранилище индексов циклов компонента
-    components.get(this).index = new WeakMap()
+    components.get(this).cicles = new WeakMap()
 
     // создать объект данных компонента
     components.get(this).object = {}
@@ -67,21 +64,21 @@ export default class extends HTMLElement {
     // перенести содержимое шаблона компонента в его теневой DOM
     ![...component.childNodes].forEach(node => this.$root.append(node))
 
-    // выполнить скрипты компонента в контексте объекта данных
-    Function(scripts).call(this.$data)
-
     // создать генератор, который станет средой выполнения узлов компонента
-    components.get(this).execute = Function(`return function*(${Object.keys(this.$data).join(',')}){` +
-      `while(true)arguments[0]=yield({${Object.keys(this.$data).join(',')}}=this,typeof arguments[0]==='function'?arguments[0]():eval(arguments[0]))` +
+    components.get(this).execute = Function('return function*(){' +
+      'while(true)arguments[0]=yield eval(`var{${Object.keys(this).join(",")}}=this;${arguments[0]}`)' +
     '}')().call(this.$data)
 
     // выполнить первый холостой вызов итератора
     components.get(this).execute.next()
 
+    // выполнить скрипты компонента в контексте генератора
+    components.get(this).execute.next(scripts)
+
     // сделать реактивными узлы теневого DOM компонента
     reactive.call(this, this.$root)
     
-    
+
     // наблюдать за изменениями в теневом DOM компонента
     new MutationObserver((mutationRecords, observer) => {
       // отключить наблюдение
