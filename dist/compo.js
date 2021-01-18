@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.4.1
+ * Components.js v3.4.2
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -519,7 +519,7 @@ function change(node) {
         var execute = components.get(this).execute; 
 
         components.get(this).iterators.set(node, {
-          outer: execute.next('(function*(){' + 'arguments[0]=yield function*(){' + 'while(true)arguments[0]=yield typeof arguments[0]==="function"?arguments[0]():eval(arguments[0])' + "};while(true){yield;for(var ".concat(components.get(this).values.get(node), ")arguments[0]()}") + '})').value.call(this.$data)
+          outer: execute.next('(function*(){' + 'arguments[0]=yield function*(){' + "while(true)arguments[0]=yield !arguments[0]?({".concat(Object.keys(this.$data).join(','), "}=this):typeof arguments[0]===\"function\"?arguments[0]():eval(arguments[0])") + "};while(true){yield;for(var ".concat(components.get(this).values.get(node), ")arguments[0]()}") + '})').value.call(this.$data)
         }); 
 
         components.get(this).execute = components.get(this).iterators.get(node).outer.next().value.call(this.$data); 
@@ -537,9 +537,9 @@ function change(node) {
       else {
           var _execute = components.get(this).execute; 
 
-          components.get(this).execute.next("({".concat(Object.keys(this.$data).join(','), "}=this)")); 
-
           components.get(this).execute = components.get(this).iterators.get(node).inner; 
+
+          components.get(this).execute.next(); 
 
           components.get(this).iterators.get(node).outer.next(); 
 
