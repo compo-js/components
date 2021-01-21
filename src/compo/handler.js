@@ -32,8 +32,8 @@ export default function(node) {
       // создать внешний генератор цикла, который станет средой выполнения для внутреннего генератора
       components.get(this).iterators.set(node, {outer: execute.next('(function*(){' +
         'arguments[0]=yield function*(){' +
-          `while(true)arguments[0]=yield !arguments[0]?({${Object.keys(this.$data).join(',')}}=this):typeof arguments[0]==="function"?arguments[0]():eval(arguments[0])` +
-        `};while(true){yield;for(var ${components.get(this).values.get(node)})arguments[0]()}` +
+          `while(true)arguments[0]=yield typeof arguments[0]==="function"?arguments[0]():eval(arguments[0])` +
+        `};while(true){yield,({${Object.keys(this.$data).join(',')}}=this);for(var ${components.get(this).values.get(node)})arguments[0]()}` +
       '})').value.call(this.$data)})
 
       // создать внутренний генератор цикла, который станет средой выполнения узлов компонента
@@ -63,9 +63,6 @@ export default function(node) {
       // сделать текущим внутренний итератор выполнения цикла
       components.get(this).execute = components.get(this).iterators.get(node).inner
 
-      // обновить переменные ключей объекта данных
-      components.get(this).execute.next()
-
       // перебрать цикл во внешнем итераторе выполнения
       components.get(this).iterators.get(node).outer.next()
 
@@ -78,7 +75,7 @@ export default function(node) {
       node.ownerElement.childNodes.length; i < length; i++) node.ownerElement.lastChild.remove()
 
     // удалить узел после выполнения текущего цикла
-    components.get(this).index.delete(node) 
+    components.get(this).index.delete(node)
   }
 
   // если это текстовый узел или узел стандартного атрибута
