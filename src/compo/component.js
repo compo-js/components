@@ -21,6 +21,9 @@ export default class extends HTMLElement {
     components.set(this, {})
 
     // создать хранилище исходных значений узлов компонента
+    components.get(this).sources = new Map()
+
+    // создать хранилище вычисляемых значений узлов компонента
     components.get(this).values = new WeakMap()
 
     // создать хранилище идентификаторов обратных вызовов для узлов

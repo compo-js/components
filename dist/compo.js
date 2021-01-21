@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.4.2
+ * Components.js v3.5.0
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -430,22 +430,30 @@ var regOn = /^on/;
 function reactive(node) {
   if (node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove(); 
 
+  var parent = components.get(this).nodes[components.get(this).nodes.length - 1] || null; 
+
   var data = node[node.nodeType === 2 ? 'value' : 'data']; 
 
   if (node.nodeType === 2 || node.nodeType === 3) {
-    if (node.nodeName === 'c-hide') components.get(this).values.set(node, components.get(this).execute.next("()=>`${".concat(node.value, "}`")).value); 
-    else if (node.nodeName === 'c-for') {
-        components.get(this).values.set(node, node.value); 
+    if (node.nodeName === 'c-for') {
+      components.get(this).values.set(node, node.value); 
 
-        var template = new DocumentFragment(); 
+      var template = new DocumentFragment(); 
 
-        !toConsumableArray_default()(clear(node.ownerElement).childNodes).forEach(function (node) {
-          return template.append(node);
-        }); 
+      !toConsumableArray_default()(clear(node.ownerElement).childNodes).forEach(function (node) {
+        return template.append(node);
+      }); 
 
-        components.get(this).values.set(node.ownerElement, template);
+      components.get(this).values.set(node.ownerElement, template);
+    } 
+    else {
+        if (!components.get(this).sources.has(parent)) components.get(this).sources.set(parent, {}); 
+
+        if (!components.get(this).sources.get(parent)[data]) node.nodeName === 'c-hide' ? components.get(this).sources.get(parent)[data] = components.get(this).execute.next("()=>`${".concat(node.value, "}`")).value : components.get(this).sources.get(parent)[data] = components.get(this).execute.next("()=>`".concat(data, "`")).value; 
+
+        components.get(this).values.set(node, components.get(this).sources.get(parent)[data]);
       } 
-      else components.get(this).values.set(node, components.get(this).execute.next("()=>`".concat(node[node.nodeType === 2 ? 'value' : 'data'], "`")).value); 
+
 
     if (regOn.test(node.nodeName)) Object.defineProperty(node.ownerElement, '$data', {
       value: this.$data
@@ -453,7 +461,11 @@ function reactive(node) {
 
     var result = handler.call(this, node); 
 
-    if (node.nodeName !== 'c-for' && node.nodeName !== 'c-hide' && data === result[result.nodeType === 2 ? 'value' : 'data']) components.get(this).values["delete"](node);
+    if (node.nodeName !== 'c-for' && node.nodeName !== 'c-hide' && data === result[result.nodeType === 2 ? 'value' : 'data']) {
+      delete components.get(this).sources.get(parent)[data]; 
+
+      components.get(this).values["delete"](node); 
+    }
   } else {
     if (node.attributes) for (var i = 0, length = node.attributes.length; i < length; i++) {
       reactive.call(this, node.attributes[i]);
@@ -733,6 +745,8 @@ var component_default = function (_HTMLElement) {
     _this = _super.call(this); 
 
     components.set(assertThisInitialized_default()(_this), {}); 
+
+    components.get(assertThisInitialized_default()(_this)).sources = new Map(); 
 
     components.get(assertThisInitialized_default()(_this)).values = new WeakMap(); 
 
