@@ -20,14 +20,14 @@ export default class extends HTMLElement {
     // добавить компонент в хранилище компонентов
     components.set(this, {})
 
+    // создать хранилище идентификаторов обратных вызовов для узлов
+    components.get(this).timers = new WeakMap()
+
     // создать хранилище исходных значений узлов компонента
-    components.get(this).sources = new Map()
+    components.get(this).sources = new WeakMap()
 
     // создать хранилище вычисляемых значений узлов компонента
     components.get(this).values = new WeakMap()
-
-    // создать хранилище идентификаторов обратных вызовов для узлов
-    components.get(this).timers = new WeakMap()
 
     // создать хранилище зависимых узлов для свойств компонента
     components.get(this).depends = new WeakMap()
@@ -46,6 +46,9 @@ export default class extends HTMLElement {
 
     // создать массив ссылок на обрабатываемые узлы
     components.get(this).nodes = []
+
+    // создать датчик работы метода массива
+    components.get(this).isKeys = false
 
 
     // создать прокси объекта данных компонента

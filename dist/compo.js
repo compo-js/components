@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.5.1
+ * Components.js v3.5.2
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -430,7 +430,7 @@ var regOn = /^on/;
 function reactive(node) {
   if (node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove(); 
 
-  var parent = components.get(this).nodes[components.get(this).nodes.length - 1] || null; 
+  var parent = components.get(this).nodes[components.get(this).nodes.length - 1] || this.$root; 
 
   var data = node[node.nodeType === 2 ? 'value' : 'data']; 
 
@@ -581,6 +581,8 @@ var isProxy = Symbol();
 
 var getValue = Symbol(); 
 
+var keys = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse']); 
+
 var primitive = (_primitive = {}, defineProperty_default()(_primitive, Symbol.toPrimitive, function () {
   return this[getValue]();
 }), defineProperty_default()(_primitive, "toString", function toString() {
@@ -605,43 +607,60 @@ function notify(dep) {
 } 
 
 
-function hooks(dep, node) {
+function hooks(dep) {
   var _this2 = this;
 
   return {
     apply: function apply(target, thisArg, args) {
+      var node = components.get(_this2).nodes[0]; 
+
+      if (dep && node) dep.add(node); 
+
       if (target.name === 'toString') return JSON.stringify(thisArg, null, ' '); 
+      else if (Array.isArray(thisArg)) {
+          components.get(_this2).isKeys = true; 
+
+          var result = target.apply(thisArg, args); 
+
+          components.get(_this2).isKeys = false; 
+
+          if (dep) notify.call(_this2, dep); 
+
+          return result;
+        } 
 
       return target.apply(thisArg, args);
     },
     get: function get(target, key, receiver) {
       if (key === isProxy) return true; 
 
-      if (key !== 'toString' && !target.hasOwnProperty(key)) return Reflect.get(target, key, receiver); 
-
-      if (components.get(_this2).nodes.length) node = components.get(_this2).nodes[0]; 
-
       var _value = Reflect.get(target, key, receiver); 
 
+
+      if (Array.isArray(target) && keys.has(key)) return observable.call(_this2, _value, dep); 
+
+      if (!target.hasOwnProperty(key) && key !== 'toString') return _value; 
+
+      var node = components.get(_this2).nodes[0]; 
+
+      if (dep && node) dep.add(node); 
 
       var deps = components.get(_this2).depends.get(target); 
 
       if (!deps) components.get(_this2).depends.set(target, deps = {}); 
 
-      if (!deps[key]) deps[key] = new Set(); 
+      if (!deps.hasOwnProperty(key)) deps[key] = new Set(); 
 
-      if (_value && typeof_default()(_value) === 'object' || typeof _value === 'function') return new Proxy(components.get(_this2).proxys.has(_value) ? components.get(_this2).proxys.get(_value) : observable.call(_this2, _value, deps[key], node), {
-        get: function get(target, prop, receiver) {
-          return deps[key].add(node), Reflect.get(target, prop, receiver);
-        }
-      }); 
+      if (_value && typeof_default()(_value) === 'object' || typeof _value === 'function') return components.get(_this2).proxys.has(_value) ? components.get(_this2).proxys.get(_value) : observable.call(_this2, _value, deps[key]); 
 
-      return components.get(_this2).nodes.length ? Object.create(primitive, defineProperty_default()({}, getValue, {
+      return node ? Object.create(primitive, defineProperty_default()({}, getValue, {
         value: function value() {
-          return deps[key].add(node), _value;
+          deps[key].add(node); 
+
+          return _value;
         },
         writable: true
-      })) : _value;
+      })) : _value; 
     },
     set: function set(target, key, value, receiver) {
       var oldValue = Reflect.get(target, key, receiver); 
@@ -653,6 +672,8 @@ function hooks(dep, node) {
       components.get(_this2).proxys["delete"](oldValue); 
 
       if (!Reflect.set(target, key, value, receiver)) return false; 
+
+      if (components.get(_this2).isKeys) return true; 
 
       if (components.get(_this2).nodes.length) return true; 
 
@@ -670,10 +691,10 @@ function hooks(dep, node) {
 } 
 
 
-function observable(obj, dep, node) {
+function observable(obj, dep) {
   if (Reflect.get(obj, isProxy) || obj.hasOwnProperty(getValue)) return obj; 
 
-  return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep, node))).get(obj);
+  return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep))).get(obj);
 }
  var popstate = (function (events) {
   var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
@@ -694,6 +715,8 @@ function observable(obj, dep, node) {
 
 function remove(node) {
   var _this = this;
+
+  components.get(this).sources["delete"](node); 
 
   components.get(this).values["delete"](node); 
 
@@ -744,11 +767,11 @@ var component_default = function (_HTMLElement) {
 
     components.set(assertThisInitialized_default()(_this), {}); 
 
-    components.get(assertThisInitialized_default()(_this)).sources = new Map(); 
+    components.get(assertThisInitialized_default()(_this)).timers = new WeakMap(); 
+
+    components.get(assertThisInitialized_default()(_this)).sources = new WeakMap(); 
 
     components.get(assertThisInitialized_default()(_this)).values = new WeakMap(); 
-
-    components.get(assertThisInitialized_default()(_this)).timers = new WeakMap(); 
 
     components.get(assertThisInitialized_default()(_this)).depends = new WeakMap(); 
 
@@ -761,6 +784,8 @@ var component_default = function (_HTMLElement) {
     components.get(assertThisInitialized_default()(_this)).object = {}; 
 
     components.get(assertThisInitialized_default()(_this)).nodes = []; 
+
+    components.get(assertThisInitialized_default()(_this)).isKeys = false; 
 
     Object.defineProperty(assertThisInitialized_default()(_this), '$data', {
       value: new Proxy(observable.call(assertThisInitialized_default()(_this), components.get(assertThisInitialized_default()(_this)).object), {

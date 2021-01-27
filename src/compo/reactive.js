@@ -12,7 +12,7 @@ export default function reactive(node) {
   if(node.nodeType === 8 || node.nodeType === 3 && !node.data.trim()) return node.remove()
 
   // сохранить родительский элемент узла
-  const parent = components.get(this).nodes[components.get(this).nodes.length - 1] || null
+  const parent = components.get(this).nodes[components.get(this).nodes.length - 1] || this.$root
 
   // сохранить исходное значение узла
   const data = node[node.nodeType === 2 ? 'value' : 'data']

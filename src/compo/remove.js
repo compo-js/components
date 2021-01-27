@@ -2,6 +2,9 @@ import {components} from './component'
 
 // очищает хранилища от удалённых узлов
 export default function remove(node) {
+  // удалить узел из хранилища исходных значений узлов компонента
+  components.get(this).sources.delete(node)
+
   // удалить узел из хранилища вычисляемых значений узлов компонента
   components.get(this).values.delete(node)
 

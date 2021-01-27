@@ -55,7 +55,7 @@
 
   <style>
     h1{
-      color: red;
+      color: ${ color() };
     }
   </style>
 
@@ -66,6 +66,7 @@
     this.message = 'Compo'
     this.test = 'Тест'
     this.hide = false
+    this.color = () => 'red'
 
     this.arr = []
     const count = 3
