@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.5.2
+ * Components.js v3.5.3
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -466,29 +466,41 @@ function reactive(node) {
 
       components.get(this).values["delete"](node); 
     }
-  } else {
-    if (node.attributes) for (var i = 0, length = node.attributes.length; i < length; i++) {
-      reactive.call(this, node.attributes[i]);
-    } 
+  } 
+  else {
+      if (node.attributes) {
+        for (var i = 0, length = node.attributes.length; i < length; i++) {
+          reactive.call(this, node.attributes[i]);
+        }
 
-    if (!node.attributes || !node.attributes['c-for']) for (var _i = 0; _i < node.childNodes.length; _i++) {
-      reactive.call(this, node.childNodes[_i]) || _i--;
+        if (node.attributes['c-for']) return node; 
+      } 
+
+
+      for (var _i = 0; _i < node.childNodes.length; _i++) {
+        reactive.call(this, node.childNodes[_i]) || _i--;
+      }
     }
-  }
 
   return node; 
 }
 
 function change(node) {
-  if (node.nodeType === 2 || node.nodeType === 3) handler.call(this, node);else {
-    if (node.attributes) for (var i = 0, length = node.attributes.length; i < length; i++) {
-      change.call(this, node.attributes[i]);
-    } 
+  if (node.nodeType === 2 || node.nodeType === 3) handler.call(this, node); 
+  else {
+      if (node.attributes) {
+        for (var i = 0, length = node.attributes.length; i < length; i++) {
+          change.call(this, node.attributes[i]);
+        }
 
-    if (!node.attributes || !node.attributes['c-for']) for (var _i = 0, _length = node.childNodes.length; _i < _length; _i++) {
-      change.call(this, node.childNodes[_i]);
+        if (node.attributes['c-for']) return; 
+      } 
+
+
+      for (var _i = 0; _i < node.childNodes.length; _i++) {
+        change.call(this, node.childNodes[_i]);
+      }
     }
-  }
 }
 
 
@@ -498,7 +510,7 @@ function change(node) {
   var newNode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : components.get(this).values.get($parent);
   var oldNode = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : $parent.childNodes[index];
   if (!oldNode) $parent.append(reactive.call(this, newNode.cloneNode(true))); 
-  else for (var i = 0, length = newNode.childNodes.length; i < length; i++) {
+  else for (var i = 0; i < newNode.childNodes.length; i++) {
       change.call(this, $parent.childNodes[i + index]);
     } 
 

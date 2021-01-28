@@ -34,7 +34,7 @@ export default function reactive(node) {
       components.get(this).values.set(node.ownerElement, template)
     }
     
-    // иначе сохранить в хранилище узел и функцию, возвращающее его исходное значение
+    // иначе, сохранить в хранилище узел и функцию, возвращающее его исходное значение
     else {
       // добавить в хранилище родительский элемент и объект исходных значений
       if(!components.get(this).sources.has(parent)) components.get(this).sources.set(parent, {})
@@ -61,12 +61,16 @@ export default function reactive(node) {
     }
   }
 
+  // иначе, обработать атрибуты и потомки узла
   else {
-    // если у узла есть атрибуты, то перебрать все атрибуты узла
-    if(node.attributes) for(let i = 0, length = node.attributes.length; i < length; i++) reactive.call(this, node.attributes[i])
+    // если у узла есть атрибуты, то добавить им реактивность
+    if(node.attributes) {
+      for(let i = 0, length = node.attributes.length; i < length; i++) reactive.call(this, node.attributes[i])
+      if(node.attributes['c-for']) return node // если имеется атрибут цикла, то вернуть узел
+    }
 
-    // если у узла есть потомки, то перебрать все дочерние узлы
-    if(!node.attributes || !node.attributes['c-for']) for(let i = 0; i < node.childNodes.length; i++) reactive.call(this, node.childNodes[i]) || i--
+    // если у узла есть потомки, то перебрать все дочерние ноды
+    for(let i = 0; i < node.childNodes.length; i++) reactive.call(this, node.childNodes[i]) || i--
   }
 
   return node // вернуть узел
