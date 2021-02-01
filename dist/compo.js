@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.5.3
+ * Components.js v3.5.6
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -97,26 +97,6 @@ module.exports = _getPrototypeOf;
  }),
  (function(module, exports) {
 
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-module.exports = _defineProperty;
-
- }),
- (function(module, exports) {
-
 function _typeof(obj) {
   "@babel/helpers - typeof";
 
@@ -149,7 +129,7 @@ module.exports = _classCallCheck;
  }),
  (function(module, exports, __webpack_require__) {
 
-var setPrototypeOf = __webpack_require__(8);
+var setPrototypeOf = __webpack_require__(7);
 
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -171,7 +151,7 @@ module.exports = _inherits;
  }),
  (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(4);
+var _typeof = __webpack_require__(3);
 
 var assertThisInitialized = __webpack_require__(0);
 
@@ -240,7 +220,7 @@ module.exports = _createClass;
 
 var getPrototypeOf = __webpack_require__(2);
 
-var setPrototypeOf = __webpack_require__(8);
+var setPrototypeOf = __webpack_require__(7);
 
 var isNativeFunction = __webpack_require__(16);
 
@@ -283,9 +263,29 @@ function _wrapNativeSuper(Class) {
 module.exports = _wrapNativeSuper;
 
  }),
+ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+ }),
  (function(module, exports, __webpack_require__) {
 
-var arrayLikeToArray = __webpack_require__(9);
+var arrayLikeToArray = __webpack_require__(8);
 
 function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) return arrayLikeToArray(arr);
@@ -305,7 +305,7 @@ module.exports = _iterableToArray;
  }),
  (function(module, exports, __webpack_require__) {
 
-var arrayLikeToArray = __webpack_require__(9);
+var arrayLikeToArray = __webpack_require__(8);
 
 function _unsupportedIterableToArray(o, minLen) {
   if (!o) return;
@@ -339,7 +339,7 @@ module.exports = _isNativeFunction;
  }),
  (function(module, exports, __webpack_require__) {
 
-var setPrototypeOf = __webpack_require__(8);
+var setPrototypeOf = __webpack_require__(7);
 
 var isNativeReflectConstruct = __webpack_require__(18);
 
@@ -386,13 +386,13 @@ module.exports = _isNativeReflectConstruct;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-var classCallCheck = __webpack_require__(5);
+var classCallCheck = __webpack_require__(4);
 var classCallCheck_default = __webpack_require__.n(classCallCheck);
 
-var inherits = __webpack_require__(6);
+var inherits = __webpack_require__(5);
 var inherits_default = __webpack_require__.n(inherits);
 
-var possibleConstructorReturn = __webpack_require__(7);
+var possibleConstructorReturn = __webpack_require__(6);
 var possibleConstructorReturn_default = __webpack_require__.n(possibleConstructorReturn);
 
 var getPrototypeOf = __webpack_require__(2);
@@ -401,19 +401,19 @@ var getPrototypeOf_default = __webpack_require__.n(getPrototypeOf);
 var toConsumableArray = __webpack_require__(1);
 var toConsumableArray_default = __webpack_require__.n(toConsumableArray);
 
-var helpers_typeof = __webpack_require__(4);
+var helpers_typeof = __webpack_require__(3);
 var typeof_default = __webpack_require__.n(helpers_typeof);
 
-var createClass = __webpack_require__(10);
+var createClass = __webpack_require__(9);
 var createClass_default = __webpack_require__.n(createClass);
 
 var assertThisInitialized = __webpack_require__(0);
 var assertThisInitialized_default = __webpack_require__.n(assertThisInitialized);
 
-var wrapNativeSuper = __webpack_require__(11);
+var wrapNativeSuper = __webpack_require__(10);
 var wrapNativeSuper_default = __webpack_require__.n(wrapNativeSuper);
 
-var defineProperty = __webpack_require__(3);
+var defineProperty = __webpack_require__(11);
 var defineProperty_default = __webpack_require__.n(defineProperty);
 
 
@@ -585,25 +585,10 @@ function change(node) {
 
 
 
-var _primitive;
-
-
 
 var isProxy = Symbol(); 
 
-var getValue = Symbol(); 
-
 var keys = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse']); 
-
-var primitive = (_primitive = {}, defineProperty_default()(_primitive, Symbol.toPrimitive, function () {
-  return this[getValue]();
-}), defineProperty_default()(_primitive, "toString", function toString() {
-  return this[getValue]();
-}), defineProperty_default()(_primitive, "valueOf", function valueOf() {
-  return this[getValue]();
-}), defineProperty_default()(_primitive, "toJSON", function toJSON() {
-  return this[getValue]();
-}), _primitive); 
 
 function notify(dep) {
   var _this = this;
@@ -628,7 +613,11 @@ function hooks(dep) {
 
       if (dep && node) dep.add(node); 
 
-      if (target.name === 'toString') return JSON.stringify(thisArg, null, ' '); 
+      if (target.name === 'toString') {
+        return JSON.stringify(thisArg, function (key, value) {
+          return typeof_default()(value) === 'object' && value.hasOwnProperty(Symbol.toPrimitive) ? value[Symbol.toPrimitive]() : value;
+        }, ' ');
+      } 
       else if (Array.isArray(thisArg)) {
           components.get(_this2).isKeys = true; 
 
@@ -641,17 +630,17 @@ function hooks(dep) {
           return result;
         } 
 
+
       return target.apply(thisArg, args);
     },
     get: function get(target, key, receiver) {
       if (key === isProxy) return true; 
 
-      var _value = Reflect.get(target, key, receiver); 
+      var value = Reflect.get(target, key, receiver); 
 
+      if (key === 'toString' || Array.isArray(target) && keys.has(key)) return new Proxy(value, hooks.call(_this2, dep)); 
 
-      if (Array.isArray(target) && keys.has(key)) return observable.call(_this2, _value, dep); 
-
-      if (!target.hasOwnProperty(key) && key !== 'toString') return _value; 
+      if (!target.hasOwnProperty(key)) return value; 
 
       var node = components.get(_this2).nodes[0]; 
 
@@ -663,16 +652,11 @@ function hooks(dep) {
 
       if (!deps.hasOwnProperty(key)) deps[key] = new Set(); 
 
-      if (_value && typeof_default()(_value) === 'object' || typeof _value === 'function') return components.get(_this2).proxys.has(_value) ? components.get(_this2).proxys.get(_value) : observable.call(_this2, _value, deps[key]); 
+      if (value && typeof_default()(value) === 'object' || typeof value === 'function') return components.get(_this2).proxys.has(value) ? components.get(_this2).proxys.get(value) : observable.call(_this2, value, deps[key]); 
 
-      return node ? Object.create(primitive, defineProperty_default()({}, getValue, {
-        value: function value() {
-          deps[key].add(node); 
-
-          return _value;
-        },
-        writable: true
-      })) : _value; 
+      return node ? defineProperty_default()({}, Symbol.toPrimitive, function () {
+        return deps[key].add(node), value;
+      }) : value;
     },
     set: function set(target, key, value, receiver) {
       var oldValue = Reflect.get(target, key, receiver); 
@@ -693,9 +677,10 @@ function hooks(dep) {
 
       if (!deps) return true; 
 
-      dep = deps[key] || dep; 
+      var _dep = deps[key] || dep; 
 
-      if (dep) notify.call(_this2, dep); 
+
+      if (_dep) notify.call(_this2, _dep); 
 
       return true;
     }
@@ -704,9 +689,7 @@ function hooks(dep) {
 
 
 function observable(obj, dep) {
-  if (Reflect.get(obj, isProxy) || obj.hasOwnProperty(getValue)) return obj; 
-
-  return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep))).get(obj);
+  return Reflect.get(obj, isProxy) ? obj : components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep))).get(obj);
 }
  var popstate = (function (events) {
   var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;

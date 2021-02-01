@@ -75,7 +75,7 @@ export default function(node) {
       node.ownerElement.childNodes.length; i < length; i++) node.ownerElement.lastChild.remove()
 
     // удалить узел после выполнения текущего цикла
-    components.get(this).index.delete(node)
+    components.get(this).index.delete(node) 
   }
 
   // если это текстовый узел или узел стандартного атрибута

@@ -5,28 +5,9 @@ import handler from './handler'
 // символ для проверки объекта на прокси
 const isProxy = Symbol()
 
-// символ для получения примитивных значений
-const getValue = Symbol()
-
 // множество названий используемых методов массива
 const keys = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'])
 
-
-// прототип объекта для примитивных значений
-const primitive = {
-  [Symbol.toPrimitive]() {
-    return this[getValue]()
-  },
-  toString() {
-    return this[getValue]()
-  },
-  valueOf() {
-    return this[getValue]()
-  },
-  toJSON() {
-    return this[getValue]()
-  }
-}
 
 // вызывает обработчик для каждого узла компонента
 function notify(dep) {
@@ -54,7 +35,10 @@ function hooks(dep) {
       if(dep && node) dep.add(node)
 
       // если вызывается метод 'toString', то вернуть JSON строку
-      if(target.name === 'toString') return JSON.stringify(thisArg, null, ' ')
+      if(target.name === 'toString') {
+        return JSON.stringify(thisArg, (key, value) =>
+          typeof value === 'object' && value.hasOwnProperty(Symbol.toPrimitive) ? value[Symbol.toPrimitive]() : value, ' ')
+      }
 
       // если вызывается метод массива, то обработать его особым образом
       else if(Array.isArray(thisArg)) {
@@ -86,11 +70,11 @@ function hooks(dep) {
       // сохранить значение запрашиваемого свойства
       const value = Reflect.get(target, key, receiver)
 
-      // если вызывается один из методов массива из множества 'keys', то вернуть новый наблюдаемый прокси
-      if(Array.isArray(target) && keys.has(key)) return observable.call(this, value, dep)
+      // если вызывается метод 'toString' или один из методов массива из множества 'keys', то вернуть новый прокси
+      if(key === 'toString' || Array.isArray(target) && keys.has(key)) return new Proxy(value, hooks.call(this, dep))
 
-      // если свойство не является собственным для объекта или методом 'toString', то вернуть его значение
-      if(!target.hasOwnProperty(key) && key !== 'toString') return value
+      // если свойство не является собственным для объекта, то вернуть его значение
+      if(!target.hasOwnProperty(key)) return value
 
       // сохранить ссылку на самую верную ноду в обрабатываемый момент
       const node = components.get(this).nodes[0]
@@ -111,18 +95,8 @@ function hooks(dep) {
       if(value && typeof value === 'object' || typeof value === 'function')
         return components.get(this).proxys.has(value) ? components.get(this).proxys.get(value) : observable.call(this, value, deps[key])
       
-      // если в данный момент обрабатывается нода, то вернуть объект примитивных значений
-      return node ? Object.create(primitive, {
-        [getValue]: {
-          value: () => {
-            // добавить ноду во множество зависимостей
-            deps[key].add(node)
-            // вернуть значение свойства
-            return value
-          },
-          writable: true
-        }
-      }) : value // иначе, вернуть значение свойства как есть
+      // если в данный момент обрабатывается нода, то вернуть значение в виде объекта, иначе, вернуть значение свойства как есть
+      return node ? {[Symbol.toPrimitive]: () => (deps[key].add(node), value)} : value
     },
 
 
@@ -155,10 +129,10 @@ function hooks(dep) {
       if(!deps) return true
       
       // получить множество зависимых узлов для 'key' или для 'target'
-      dep = deps[key] || dep
+      const _dep = deps[key] || dep
 
       // обработать все узлы из полученного множества зависимостей
-      if(dep) notify.call(this, dep)
+      if(_dep) notify.call(this, _dep)
 
       // вернуть успешность операции
       return true
@@ -167,11 +141,8 @@ function hooks(dep) {
 }
 
 
-// создаёт и возвращает для любого объекта новый наблюдаемый прокси
+// создаёт и возвращает новый наблюдаемый прокси
 export default function observable(obj, dep) {
-  // если объект является прокси или примитивным значением, то вернуть его как есть
-  if(Reflect.get(obj, isProxy) || obj.hasOwnProperty(getValue)) return obj
-
-  // создать новый наблюдаемый прокси, добавить его в хранилище и вернуть в качестве результата
-  return components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep))).get(obj)
+  // если объект уже является прокси, то вернуть его как есть, иначе, вернуть новый наблюдаемый прокси
+  return Reflect.get(obj, isProxy) ? obj : components.get(this).proxys.set(obj, new Proxy(obj, hooks.call(this, dep))).get(obj)
 }
