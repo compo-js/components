@@ -88,5 +88,4 @@ The **CompoJS** library was built without looking back, which explains the lack 
 
 ## Contacts
 
-- **[https://vk.com/compojs](https://vk.com/compojs)**
 - **[compo.js@mail.ru](mailto:compo.js@mail.ru)**
