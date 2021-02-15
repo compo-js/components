@@ -6,11 +6,7 @@
     this.name = 'Футер'
 
     document.addEventListener('test', e => {
-      console.log(e.detail)
-    })
-
-    document.addEventListener('about#test', e => {
-      console.log('О компании: ', e)
+      console.log('Событие test: ', e.detail)
     })
   </script>
 </template>
@@ -119,18 +115,15 @@
     // -----------------------------------------------
 
     const event = this.$event('test', {detail: this.users[0]})
-    document.dispatchEvent(event)
 
-    document.addEventListener('contacts\\?a=5', e => {
-      console.log('Контакты: ', e)
-    })
+    setTimeout(() => document.dispatchEvent(event), 500)
 
   </script>
 </c-header>
 <c-menu>
   <nav>
     <a href="/">Главная</a>
-    <a href="/about#test">О нас</a>
+    <a href="about/test">О нас</a>
     <a href="contacts?a=5">Контакты</a>
     <a href="https://yandex.ru/" target="_blank">Яндек</a>
     <a href="dist/img/001.png">IMG</a>
@@ -145,21 +138,18 @@
   </style>
 
   <script>
-    const event1 = this.$event('#start')
-    const event2 = this.$event('about#test')
-    const event3 = this.$event('contacts\\?a=5')
-    const event4 = this.$event('.*')
-
-    document.addEventListener('#start', e => {
-      console.log('Старт: ', e)
+    const router = this.$router(this.$('nav'), {
+      start: true
     })
 
-    document.addEventListener('.*', e => {
+    router(/.*\/test/, e => {
+      console.log('О нас: ', e)
+    })
+
+    router('.*', e => {
       console.log('Все: ', e)
     })
 
-    this.$router(this.$('nav'), {
-      start: true
-    }, event1, event2, event3, event4)
+
   </script>
 </c-menu>

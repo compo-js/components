@@ -103,11 +103,8 @@
     // -----------------------------------------------
 
     const event = this.$event('test', {detail: this.users[0]})
-    document.dispatchEvent(event)
 
-    document.addEventListener('contacts\\?a=5', e => {
-      console.log('Контакты: ', e)
-    })
+    setTimeout(() => document.dispatchEvent(event), 500)
 
   </script>
 </c-header>

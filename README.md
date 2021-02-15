@@ -6,6 +6,7 @@
 
 - **[Tutorial](http://www.compojs.ru/guide)**
 - **[Example](http://compojs.ru/example)**
+- **[Server](http://compojs.ru/server)**
 - **[Builder](https://www.npmjs.com/package/gulp-compo-builder)**
 
 Below is an example of a simple component with a header and three loops available in the library:

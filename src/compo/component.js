@@ -152,14 +152,17 @@ export default class extends HTMLElement {
   }
 
   // создаёт и возвращает пользовательское событие, через конструктор 'CustomEvent'
-  $event(event, props) {
+  $event(event, props = {}) {
     return new CustomEvent(event, props)
   }
 
   // создаёт маршрутизатор для элемента и запускает события для объекта 'document'
-  $router(elem, props, ...args) {
+  $router(elem, props = {}) {
+    // создать массив для хранения объектов событий
+    const events = []
+
     // добавить обработчик события 'popstate' для объекта 'window', который вызывает одноимённую функцию-обработчик
-    window.addEventListener('popstate', () => popstate(args))
+    window.addEventListener('popstate', () => popstate(events))
 
     // добавить обработчик события 'click' для переданного элемента
     elem.addEventListener('click', (e, target = e.path[0]) => {
@@ -169,14 +172,29 @@ export default class extends HTMLElement {
       // приостановить переход по ссылке
       e.preventDefault()
       
-      // если событие сгенерировано пользователем, то добавить новую запись в историю браузера
-      if(e.isTrusted) history.pushState(null, '', target.href)
+      // добавить новую запись в историю браузера
+      history.pushState(null, '', target.href)
 
       // вызвать функцию-обработчик для события 'popstate'
-      popstate(args, target)
+      popstate(events, target)
     }, props)
 
-    // если было передано свойство 'start' со значением истина, то вызвать функцию-обработчик 'popstate'
-    if(props && typeof props === 'object' && props.start) popstate(args)
+    // вернуть метод для создания событий и добавления им обработчиков
+    return (event, callback, opts = {}) => {
+      // если событие является регулярным выражением, то преобразовать его в строку
+      if(event instanceof RegExp) event = event.toString().slice(1, -1)
+      
+      // создать новое событие и сохранить его объект в константе
+      const _event = this.$event(event, opts)
+
+      // добавить сохранённый объект события в массив событий
+      events.push(_event)
+
+      // добавить обработчик для только что созданного события
+      document.addEventListener(event, callback)
+
+      // если свойство 'start' объекта параметров 'props' равно истина, то вызвать функцию-обработчик 'popstate' для этого события
+      if(props.start) popstate([_event])
+    }
   }
 }

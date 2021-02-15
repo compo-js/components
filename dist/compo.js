@@ -1,5 +1,5 @@
 /*!
- * Components.js v3.5.6
+ * Components.js v4.0.0
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -97,27 +97,6 @@ module.exports = _getPrototypeOf;
  }),
  (function(module, exports) {
 
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    module.exports = _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-module.exports = _typeof;
-
- }),
- (function(module, exports) {
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -151,7 +130,7 @@ module.exports = _inherits;
  }),
  (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(3);
+var _typeof = __webpack_require__(6);
 
 var assertThisInitialized = __webpack_require__(0);
 
@@ -164,6 +143,27 @@ function _possibleConstructorReturn(self, call) {
 }
 
 module.exports = _possibleConstructorReturn;
+
+ }),
+ (function(module, exports) {
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    module.exports = _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    module.exports = _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+module.exports = _typeof;
 
  }),
  (function(module, exports) {
@@ -386,13 +386,13 @@ module.exports = _isNativeReflectConstruct;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-var classCallCheck = __webpack_require__(4);
+var classCallCheck = __webpack_require__(3);
 var classCallCheck_default = __webpack_require__.n(classCallCheck);
 
-var inherits = __webpack_require__(5);
+var inherits = __webpack_require__(4);
 var inherits_default = __webpack_require__.n(inherits);
 
-var possibleConstructorReturn = __webpack_require__(6);
+var possibleConstructorReturn = __webpack_require__(5);
 var possibleConstructorReturn_default = __webpack_require__.n(possibleConstructorReturn);
 
 var getPrototypeOf = __webpack_require__(2);
@@ -400,9 +400,6 @@ var getPrototypeOf_default = __webpack_require__.n(getPrototypeOf);
 
 var toConsumableArray = __webpack_require__(1);
 var toConsumableArray_default = __webpack_require__.n(toConsumableArray);
-
-var helpers_typeof = __webpack_require__(3);
-var typeof_default = __webpack_require__.n(helpers_typeof);
 
 var createClass = __webpack_require__(9);
 var createClass_default = __webpack_require__.n(createClass);
@@ -415,6 +412,9 @@ var wrapNativeSuper_default = __webpack_require__.n(wrapNativeSuper);
 
 var defineProperty = __webpack_require__(11);
 var defineProperty_default = __webpack_require__.n(defineProperty);
+
+var helpers_typeof = __webpack_require__(6);
+var typeof_default = __webpack_require__.n(helpers_typeof);
 
 
 function clear(node) {
@@ -693,9 +693,8 @@ function observable(obj, dep) {
 }
  var popstate = (function (events) {
   var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
-  var href = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : target.href.replace(target.origin, '');
   events.forEach(function (event) {
-    if (new RegExp("^[/]?".concat(event.type, "$")).test(href)) {
+    if (new RegExp("[/]?".concat(event.type, "$")).test(target.href.replace(target.origin, ''))) {
       Object.defineProperty(event, 'target', {
         value: target,
         enumerable: true,
@@ -723,7 +722,6 @@ function remove(node) {
     return remove.call(_this, node);
   });
 }
-
 
 
 
@@ -926,19 +924,21 @@ var component_default = function (_HTMLElement) {
 
   }, {
     key: "$event",
-    value: function $event(event, props) {
+    value: function $event(event) {
+      var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       return new CustomEvent(event, props);
     } 
 
   }, {
     key: "$router",
-    value: function $router(elem, props) {
-      for (var _len4 = arguments.length, args = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-        args[_key4 - 2] = arguments[_key4];
-      }
+    value: function $router(elem) {
+      var _this8 = this;
+
+      var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var events = []; 
 
       window.addEventListener('popstate', function () {
-        return popstate(args);
+        return popstate(events);
       }); 
 
       elem.addEventListener('click', function (e) {
@@ -947,12 +947,24 @@ var component_default = function (_HTMLElement) {
 
         e.preventDefault(); 
 
-        if (e.isTrusted) history.pushState(null, '', target.href); 
+        history.pushState(null, '', target.href); 
 
-        popstate(args, target);
+        popstate(events, target);
       }, props); 
 
-      if (props && typeof_default()(props) === 'object' && props.start) popstate(args);
+      return function (event, callback) {
+        var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        if (event instanceof RegExp) event = event.toString().slice(1, -1); 
+
+        var _event = _this8.$event(event, opts); 
+
+
+        events.push(_event); 
+
+        document.addEventListener(event, callback); 
+
+        if (props.start) popstate([_event]);
+      };
     }
   }]);
 
