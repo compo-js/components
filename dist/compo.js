@@ -1,5 +1,5 @@
 /*!
- * Components.js v4.0.0
+ * Components.js v4.0.1
  * (c) 2021 compo.js@mail.ru
  * Released under the MIT License.
  */
@@ -694,7 +694,7 @@ function observable(obj, dep) {
  var popstate = (function (events) {
   var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
   events.forEach(function (event) {
-    if (new RegExp("[/]?".concat(event.type, "$")).test(target.href.replace(target.origin, ''))) {
+    if (new RegExp("^[/]?".concat(event.type, "$")).test(target.href.replace(target.origin, ''))) {
       Object.defineProperty(event, 'target', {
         value: target,
         enumerable: true,
